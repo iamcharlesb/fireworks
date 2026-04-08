@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Getting Started with Fireworks++ — Fireworks++</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f9fafb;
+      --surface: #ffffff;
+      --border: #e2e6ef;
+      --accent: #e05a1a;
+      --accent2: #c04a0e;
+      --text: #1a1d2e;
+      --muted: #6b7280;
+      --code-bg: #f3f4f6;
+      --link: #2563eb;
+      --nav-w: 260px;
+    }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    nav {
+      width: var(--nav-w);
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 0;
+      position: fixed;
+      top: 0; left: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-brand {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-brand .logo {
+      font-size: 22px;
+    }
+    .nav-brand h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .nav-brand span {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 12px 0;
+    }
+    nav ul li a {
+      display: block;
+      padding: 7px 24px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.15s, background 0.15s;
+      border-left: 3px solid transparent;
+    }
+    nav ul li a:hover {
+      color: var(--text);
+      background: rgba(255,107,43,0.06);
+    }
+    nav ul li.active a {
+      color: var(--accent2);
+      border-left-color: var(--accent);
+      background: rgba(255,107,43,0.08);
+      font-weight: 600;
+    }
+
+    /* ── Main content ── */
+    main {
+      margin-left: var(--nav-w);
+      flex: 1;
+      max-width: 860px;
+      padding: 52px 60px;
+    }
+
+    h1 { font-size: 2rem; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.5px; }
+    h2 { font-size: 1.4rem; font-weight: 700; margin: 40px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.1rem; font-weight: 600; margin: 28px 0 10px; }
+    h4 { font-size: 1rem; font-weight: 600; margin: 20px 0 8px; color: var(--accent2); }
+    h5, h6 { font-size: 0.95rem; font-weight: 600; margin: 16px 0 6px; color: var(--muted); }
+
+    p { margin: 12px 0; color: var(--text); }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    code {
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 0.85em;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #c2410c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      overflow-x: auto;
+      margin: 18px 0;
+      position: relative;
+    }
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: #374151;
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 0.88em;
+      line-height: 1.6;
+    }
+
+    /* Syntax-ish colour hints */
+    pre code .kw { color: #c678dd; }
+    pre code .st { color: #98c379; }
+    pre code .cm { color: #5c6370; font-style: italic; }
+
+    blockquote {
+      border-left: 4px solid var(--accent);
+      background: rgba(255,107,43,0.06);
+      padding: 14px 20px;
+      border-radius: 0 6px 6px 0;
+      margin: 16px 0;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    ul, ol {
+      padding-left: 24px;
+      margin: 12px 0;
+    }
+    li { margin: 5px 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.9rem;
+    }
+    th {
+      background: var(--surface);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      color: var(--accent2);
+    }
+    td {
+      padding: 9px 14px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+
+    strong { color: #111; font-weight: 700; }
+    em { color: var(--accent2); font-style: italic; }
+    del { color: var(--muted); }
+
+    /* ── Badge pills on homepage ── */
+    .badge {
+      display: inline-block;
+      background: rgba(255,107,43,0.15);
+      color: var(--accent2);
+      border: 1px solid rgba(255,107,43,0.3);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    @media (max-width: 768px) {
+      nav { display: none; }
+      main { margin-left: 0; padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-brand">
+      <span class="logo">🔥</span>
+      <div>
+        <h1>Fireworks++</h1>
+        <span>v0.1.0</span>
+      </div>
+    </div>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+<li class="active"><a href="getting-started.html">Getting Started</a></li>
+<li><a href="concepts.html">Concepts</a></li>
+<li><a href="llms.html">LLMs</a></li>
+<li><a href="chains.html">Chains</a></li>
+<li><a href="agents.html">Agents</a></li>
+<li><a href="tools.html">Tools</a></li>
+<li><a href="memory.html">Memory</a></li>
+<li><a href="prompts.html">Prompts</a></li>
+<li><a href="output-parsers.html">Output Parsers</a></li>
+<li><a href="document-loaders.html">Document Loaders</a></li>
+<li><a href="vector-stores.html">Vector Stores</a></li>
+<li><a href="callbacks.html">Callbacks</a></li>
+<li><a href="cli.html">CLI</a></li>
+<li><a href="checkpoints.html">Checkpoints</a></li>
+<li><a href="evaluations.html">Evaluations</a></li>
+<li><a href="simple-api.html">Simple API</a></li>
+<li><a href="mcp.html">MCP</a></li>
+<li><a href="auth.html">Auth</a></li>
+<li><a href="governance.html">Governance</a></li>
+<li><a href="plugins.html">Plugins</a></li>
+<li><a href="integrations.html">Integrations</a></li>
+<li><a href="monitoring.html">Monitoring</a></li>
+<li><a href="server.html">Server</a></li>
+<li><a href="python-sdk.html">Python SDK</a></li>
+<li><a href="workflows.html">Workflows</a></li>
+<li><a href="routing.html">Routing</a></li>
+<li><a href="safety.html">Safety</a></li>
+<li><a href="api-reference.html">API Reference</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h1 id="getting-started-with-fireworks">Getting Started with Fireworks++</h1>
+
+<p>This guide walks you through installing Fireworks++, configuring your API keys, and building your first LLM-powered application step by step.</p>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<ul><li>Node.js 18 or later</li><li>npm or yarn</li><li>An Anthropic, OpenAI, or Perplexity API key (or a local Ollama installation)</li></ul>
+
+<h2 id="installation">Installation</h2>
+
+<pre><code class="language-bash">npm install fireworks-plus-plus</code></pre>
+
+<p>Fireworks++ has zero required runtime dependencies. The only peer dependencies are the optional official SDK packages for Anthropic and OpenAI, and even those are not needed — Fireworks++ calls the provider APIs directly using the built-in <code>fetch</code>.</p>
+
+<h2 id="setting-up-api-keys">Setting Up API Keys</h2>
+
+<p>The recommended approach is to use environment variables so keys never appear in code.</p>
+
+<pre><code class="language-bash"># For Anthropic Claude
+export ANTHROPIC_API_KEY=sk-ant-...
+
+# For OpenAI
+export OPENAI_API_KEY=sk-...
+
+# For Perplexity
+export PERPLEXITY_API_KEY=pplx-...</code></pre>
+
+<p>You can also pass the key directly in the constructor config for quick prototyping:</p>
+
+<pre><code class="language-typescript">const llm = new ChatAnthropic({ apiKey: 'sk-ant-...' })</code></pre>
+
+<p>For production applications, always use environment variables or a secrets manager.</p>
+
+<h2 id="step-1-your-first-chat-completion">Step 1: Your First Chat Completion</h2>
+
+<p>The simplest use of Fireworks++ is calling a chat model directly.</p>
+
+<pre><code class="language-typescript">import { ChatAnthropic } from 'fireworks-plus-plus'
+
+async function main() {
+  const llm = new ChatAnthropic({
+    // Reads ANTHROPIC_API_KEY from environment if apiKey is omitted
+    model: 'claude-3-5-sonnet-20241022',
+    temperature: 0.7,
+    maxTokens: 1024
+  })
+
+  const reply = await llm.call([
+    { role: 'system', content: 'You are a concise assistant.' },
+    { role: 'human', content: 'What is TypeScript?' }
+  ])
+
+  console.log(reply.content)
+  // "TypeScript is a statically typed superset of JavaScript..."
+}
+
+main().catch(console.error)</code></pre>
+
+<h3 id="multi-turn-conversation">Multi-turn Conversation</h3>
+
+<p>To have a multi-turn conversation, build up the message array manually:</p>
+
+<pre><code class="language-typescript">import { ChatAnthropic } from 'fireworks-plus-plus'
+import type { Message } from 'fireworks-plus-plus'
+
+const llm = new ChatAnthropic()
+
+const conversation: Message[] = []
+
+async function chat(userInput: string): Promise&lt;string&gt; {
+  conversation.push({ role: 'human', content: userInput })
+  const reply = await llm.call(conversation)
+  conversation.push({ role: 'ai', content: reply.content })
+  return reply.content
+}
+
+console.log(await chat('My name is Alice.'))
+console.log(await chat('What is my name?'))
+// "Your name is Alice."</code></pre>
+
+<h2 id="step-2-building-your-first-chain">Step 2: Building Your First Chain</h2>
+
+<p>Chains combine a prompt template with an LLM. The <code>LLMChain</code> is the fundamental building block.</p>
+
+<pre><code class="language-typescript">import { ChatAnthropic, LLMChain, PromptTemplate } from 'fireworks-plus-plus'
+
+async function main() {
+  const llm = new ChatAnthropic()
+
+  // PromptTemplate.fromTemplate() auto-detects {variable} placeholders
+  const prompt = PromptTemplate.fromTemplate(
+    'You are a helpful assistant. Answer this question concisely: {question}'
+  )
+
+  const chain = new LLMChain(llm, prompt)
+
+  // Pass a single string when there is one input variable
+  const answer = await chain.run('What is the difference between null and undefined in JavaScript?')
+  console.log(answer)
+
+  // Or pass an object for multiple variables
+  const prompt2 = PromptTemplate.fromTemplate(
+    'Translate "{text}" from {source_language} to {target_language}.'
+  )
+  const translateChain = new LLMChain(llm, prompt2)
+  const translation = await translateChain.run({
+    text: 'Hello, world!',
+    source_language: 'English',
+    target_language: 'Spanish'
+  })
+  console.log(translation)
+}
+
+main().catch(console.error)</code></pre>
+
+<h3 id="sequential-chains">Sequential Chains</h3>
+
+<p>Chain multiple LLMChains together so the output of one feeds the input of the next.</p>
+
+<pre><code class="language-typescript">import { ChatAnthropic, LLMChain, SimpleSequentialChain, PromptTemplate } from 'fireworks-plus-plus'
+
+const llm = new ChatAnthropic()
+
+const summarizePrompt = PromptTemplate.fromTemplate(
+  'Summarize this text in one sentence: {input}'
+)
+const tweetPrompt = PromptTemplate.fromTemplate(
+  'Turn this summary into a tweet under 280 characters: {input}'
+)
+
+const summarizeChain = new LLMChain(llm, summarizePrompt)
+const tweetChain = new LLMChain(llm, tweetPrompt)
+
+// SimpleSequentialChain passes each chain's output as the next chain's input
+const pipeline = new SimpleSequentialChain([summarizeChain, tweetChain])
+const tweet = await pipeline.call({ input: longArticleText })
+console.log(tweet.output)</code></pre>
+
+<h2 id="step-3-using-chat-prompt-templates">Step 3: Using Chat Prompt Templates</h2>
+
+<p><code>ChatPromptTemplate</code> produces structured message arrays for chat models, including system messages.</p>
+
+<pre><code class="language-typescript">import { ChatAnthropic, LLMChain, ChatPromptTemplate } from 'fireworks-plus-plus'
+
+const llm = new ChatAnthropic()
+
+const prompt = ChatPromptTemplate.fromMessages([
+  ['system', 'You are an expert {domain} consultant. Be professional and concise.'],
+  ['human', '{question}']
+])
+
+const chain = new LLMChain(llm, prompt)
+
+const result = await chain.run({
+  domain: 'TypeScript',
+  question: 'What are the best practices for handling async errors?'
+})
+console.log(result)</code></pre>
+
+<h2 id="step-4-adding-memory-to-a-chat">Step 4: Adding Memory to a Chat</h2>
+
+<p>Memory persists conversation context across calls.</p>
+
+<pre><code class="language-typescript">import { ChatAnthropic, LLMChain, ChatPromptTemplate, ConversationBufferMemory } from 'fireworks-plus-plus'
+
+const llm = new ChatAnthropic()
+const memory = new ConversationBufferMemory({ memoryKey: 'history' })
+
+async function chat(userInput: string): Promise&lt;string&gt; {
+  // Load existing conversation history
+  const memVars = await memory.loadMemoryVariables()
+  const history = memVars['history'] as string
+
+  const messages = []
+  if (history) {
+    messages.push({
+      role: 'system' as const,
+      content: `Previous conversation:\n${history}`
+    })
+  }
+  messages.push({ role: 'human' as const, content: userInput })
+
+  const reply = await llm.call(messages)
+
+  // Save the new exchange to memory
+  await memory.saveContext({ input: userInput }, { output: reply.content })
+
+  return reply.content
+}
+
+// Each call builds on the previous context
+await chat('My favourite programming language is TypeScript.')
+await chat('I work at a startup building AI tools.')
+const summary = await chat('Summarise what you know about me.')
+console.log(summary)</code></pre>
+
+<h3 id="windowed-memory">Windowed Memory</h3>
+
+<p>For long conversations, use windowed memory to keep only the most recent exchanges:</p>
+
+<pre><code class="language-typescript">import { ConversationWindowMemory } from 'fireworks-plus-plus'
+
+// Only keeps the last 5 human+AI exchanges (10 messages total)
+const memory = new ConversationWindowMemory({ k: 5 })</code></pre>
+
+<h2 id="step-5-creating-a-tool">Step 5: Creating a Tool</h2>
+
+<p>Tools let agents interact with the world. Use <code>DynamicTool</code> to wrap any function:</p>
+
+<pre><code class="language-typescript">import { DynamicTool, CalculatorTool, ResearchTool } from 'fireworks-plus-plus'
+
+// Wrap your own function
+const weatherTool = new DynamicTool({
+  name: 'get_weather',
+  description: 'Get the current weather for a city. Input: city name.',
+  func: async (city: string) =&gt; {
+    // In a real app, call a weather API here
+    return { output: `The weather in ${city} is sunny and 22°C.` }
+  }
+})
+
+const result = await weatherTool.run('London')
+console.log(result) // "The weather in London is sunny and 22°C."
+
+// Built-in tools
+const calc = new CalculatorTool()
+console.log(await calc.run('(2 + 3) * 4 / 2')) // "10"
+
+const research = new ResearchTool({ maxResults: 2 })
+console.log(await research.run('Eiffel Tower'))</code></pre>
+
+<h2 id="step-6-loading-documents-for-rag">Step 6: Loading Documents for RAG</h2>
+
+<p>Load text files, embed them, and use a retriever for semantic retrieval.</p>
+
+<pre><code class="language-typescript">import { TextLoader, InMemoryVectorStore, FakeEmbeddings, VectorStoreRetriever } from 'fireworks-plus-plus'
+
+async function buildKnowledgeBase(filePaths: string[]) {
+  const allDocs = []
+
+  for (const filePath of filePaths) {
+    const loader = new TextLoader(filePath)
+    const docs = await loader.load()
+    allDocs.push(...docs)
+  }
+
+  // FakeEmbeddings is deterministic and great for development/testing.
+  // Replace with a real embeddings provider for production.
+  const embeddings = new FakeEmbeddings(128)
+  const store = await InMemoryVectorStore.fromDocuments(allDocs, embeddings)
+
+  return store
+}
+
+async function main() {
+  const store = await buildKnowledgeBase(['./docs/faq.txt', './docs/guide.txt'])
+  const retriever = new VectorStoreRetriever(store, { k: 3 })
+
+  // Retrieve the 3 most relevant chunks
+  const results = await retriever.getRelevantDocuments('How do I reset my password?')
+
+  for (const doc of results) {
+    console.log('---')
+    console.log(doc.pageContent.slice(0, 200))
+    console.log('Source:', doc.metadata['source'])
+  }
+}
+
+main().catch(console.error)</code></pre>
+
+<h2 id="step-7-parsing-structured-output">Step 7: Parsing Structured Output</h2>
+
+<p>Use output parsers to extract typed data from LLM responses.</p>
+
+<pre><code class="language-typescript">import { ChatAnthropic, LLMChain, PromptTemplate, JsonOutputParser, StructuredOutputParser } from 'fireworks-plus-plus'
+
+const llm = new ChatAnthropic()
+
+// JSON parser — extracts any JSON object from the response
+const jsonParser = new JsonOutputParser()
+const jsonPrompt = PromptTemplate.fromTemplate(
+  'Return a JSON object with fields "name" and "capital" for this country: {country}\n\n' +
+  jsonParser.getFormatInstructions()
+)
+const jsonChain = new LLMChain(llm, jsonPrompt, { outputParser: jsonParser })
+const countryData = await jsonChain.run('France')
+console.log(countryData) // { name: "France", capital: "Paris" }
+
+// Structured parser — define a schema for the expected fields
+const structuredParser = StructuredOutputParser.fromNamesAndDescriptions({
+  pros: 'Comma-separated list of pros',
+  cons: 'Comma-separated list of cons',
+  verdict: 'One sentence summary verdict'
+})
+
+const reviewPrompt = PromptTemplate.fromTemplate(
+  'Analyse the pros and cons of {technology}.\n\n' +
+  structuredParser.getFormatInstructions()
+)
+const reviewChain = new LLMChain(llm, reviewPrompt, { outputParser: structuredParser })
+const review = await reviewChain.run('TypeScript')
+console.log(review.pros)
+console.log(review.verdict)</code></pre>
+
+<h2 id="step-8-streaming-responses">Step 8: Streaming Responses</h2>
+
+<p>Stream tokens as they are generated for a responsive UI experience.</p>
+
+<pre><code class="language-typescript">import { ChatAnthropic, StreamingCallbackHandler } from 'fireworks-plus-plus'
+
+// Method 1: Direct streaming with callback
+const llm = new ChatAnthropic()
+process.stdout.write('Assistant: ')
+await llm.stream(
+  [{ role: 'human', content: 'Write a short poem about the ocean.' }],
+  (chunk) =&gt; {
+    if (!chunk.isFinal) {
+      process.stdout.write(chunk.text)
+    } else {
+      process.stdout.write('\n')
+    }
+  }
+)
+
+// Method 2: Using StreamingCallbackHandler with a chain
+import { LLMChain, PromptTemplate } from 'fireworks-plus-plus'
+
+const handler = new StreamingCallbackHandler((token) =&gt; {
+  process.stdout.write(token)
+})
+
+const llmWithCallbacks = new ChatAnthropic({ callbacks: [handler] })
+const chain = new LLMChain(llmWithCallbacks, PromptTemplate.fromTemplate('{input}'))
+await chain.run('Describe the universe in three sentences.')
+console.log('\nFull text:', handler.getBuffer())</code></pre>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<ul><li>Read <a href="./concepts.md">Core Concepts</a> to understand the architecture</li><li>Explore <a href="./chains.md">Chains</a> for advanced chain composition</li><li>Learn about <a href="./agents.md">Agents and Tools</a> for autonomous task execution</li><li>See <a href="./memory.md">Memory</a> for all available memory strategies</li><li>Check <a href="./routing.md">Intent Routing</a> to route requests automatically</li><li>Browse <a href="../examples/">examples/</a> for runnable code</li></ul>
+
+  </main>
+</body>
+</html>

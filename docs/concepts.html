@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Core Concepts — Fireworks++</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f9fafb;
+      --surface: #ffffff;
+      --border: #e2e6ef;
+      --accent: #e05a1a;
+      --accent2: #c04a0e;
+      --text: #1a1d2e;
+      --muted: #6b7280;
+      --code-bg: #f3f4f6;
+      --link: #2563eb;
+      --nav-w: 260px;
+    }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    nav {
+      width: var(--nav-w);
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 0;
+      position: fixed;
+      top: 0; left: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-brand {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-brand .logo {
+      font-size: 22px;
+    }
+    .nav-brand h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .nav-brand span {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 12px 0;
+    }
+    nav ul li a {
+      display: block;
+      padding: 7px 24px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.15s, background 0.15s;
+      border-left: 3px solid transparent;
+    }
+    nav ul li a:hover {
+      color: var(--text);
+      background: rgba(255,107,43,0.06);
+    }
+    nav ul li.active a {
+      color: var(--accent2);
+      border-left-color: var(--accent);
+      background: rgba(255,107,43,0.08);
+      font-weight: 600;
+    }
+
+    /* ── Main content ── */
+    main {
+      margin-left: var(--nav-w);
+      flex: 1;
+      max-width: 860px;
+      padding: 52px 60px;
+    }
+
+    h1 { font-size: 2rem; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.5px; }
+    h2 { font-size: 1.4rem; font-weight: 700; margin: 40px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.1rem; font-weight: 600; margin: 28px 0 10px; }
+    h4 { font-size: 1rem; font-weight: 600; margin: 20px 0 8px; color: var(--accent2); }
+    h5, h6 { font-size: 0.95rem; font-weight: 600; margin: 16px 0 6px; color: var(--muted); }
+
+    p { margin: 12px 0; color: var(--text); }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    code {
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 0.85em;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #c2410c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      overflow-x: auto;
+      margin: 18px 0;
+      position: relative;
+    }
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: #374151;
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 0.88em;
+      line-height: 1.6;
+    }
+
+    /* Syntax-ish colour hints */
+    pre code .kw { color: #c678dd; }
+    pre code .st { color: #98c379; }
+    pre code .cm { color: #5c6370; font-style: italic; }
+
+    blockquote {
+      border-left: 4px solid var(--accent);
+      background: rgba(255,107,43,0.06);
+      padding: 14px 20px;
+      border-radius: 0 6px 6px 0;
+      margin: 16px 0;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    ul, ol {
+      padding-left: 24px;
+      margin: 12px 0;
+    }
+    li { margin: 5px 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.9rem;
+    }
+    th {
+      background: var(--surface);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      color: var(--accent2);
+    }
+    td {
+      padding: 9px 14px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+
+    strong { color: #111; font-weight: 700; }
+    em { color: var(--accent2); font-style: italic; }
+    del { color: var(--muted); }
+
+    /* ── Badge pills on homepage ── */
+    .badge {
+      display: inline-block;
+      background: rgba(255,107,43,0.15);
+      color: var(--accent2);
+      border: 1px solid rgba(255,107,43,0.3);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    @media (max-width: 768px) {
+      nav { display: none; }
+      main { margin-left: 0; padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-brand">
+      <span class="logo">🔥</span>
+      <div>
+        <h1>Fireworks++</h1>
+        <span>v0.1.0</span>
+      </div>
+    </div>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li class="active"><a href="concepts.html">Concepts</a></li>
+<li><a href="llms.html">LLMs</a></li>
+<li><a href="chains.html">Chains</a></li>
+<li><a href="agents.html">Agents</a></li>
+<li><a href="tools.html">Tools</a></li>
+<li><a href="memory.html">Memory</a></li>
+<li><a href="prompts.html">Prompts</a></li>
+<li><a href="output-parsers.html">Output Parsers</a></li>
+<li><a href="document-loaders.html">Document Loaders</a></li>
+<li><a href="vector-stores.html">Vector Stores</a></li>
+<li><a href="callbacks.html">Callbacks</a></li>
+<li><a href="cli.html">CLI</a></li>
+<li><a href="checkpoints.html">Checkpoints</a></li>
+<li><a href="evaluations.html">Evaluations</a></li>
+<li><a href="simple-api.html">Simple API</a></li>
+<li><a href="mcp.html">MCP</a></li>
+<li><a href="auth.html">Auth</a></li>
+<li><a href="governance.html">Governance</a></li>
+<li><a href="plugins.html">Plugins</a></li>
+<li><a href="integrations.html">Integrations</a></li>
+<li><a href="monitoring.html">Monitoring</a></li>
+<li><a href="server.html">Server</a></li>
+<li><a href="python-sdk.html">Python SDK</a></li>
+<li><a href="workflows.html">Workflows</a></li>
+<li><a href="routing.html">Routing</a></li>
+<li><a href="safety.html">Safety</a></li>
+<li><a href="api-reference.html">API Reference</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h1 id="core-concepts">Core Concepts</h1>
+
+<p>This document explains the fundamental abstractions in Fireworks++ and how they fit together.</p>
+
+<h2 id="the-mental-model">The Mental Model</h2>
+
+<p>Fireworks++ is built around a simple idea: LLM applications are composed of small, reusable units that can be chained, extended, and monitored. Each concept maps cleanly to a TypeScript class with a well-defined interface.</p>
+
+<hr>
+
+<h2 id="chains">Chains</h2>
+
+<p>A <strong>Chain</strong> is the fundamental unit of computation in Fireworks++. Every chain takes a set of named inputs (a <code>ChainValues</code> record), does some work, and returns named outputs.</p>
+
+<p>The most important chain is <code>LLMChain</code>, which pairs a prompt template with an LLM call:</p>
+
+<pre><code class="language-typescript">import { ChatAnthropic, LLMChain, PromptTemplate } from 'fireworks-plus-plus'
+
+const llm = new ChatAnthropic()
+const prompt = PromptTemplate.fromTemplate('Explain {concept} in simple terms.')
+const chain = new LLMChain(llm, prompt)
+
+const result = await chain.run('recursion')
+console.log(result)</code></pre>
+
+<p><strong>Why use chains?</strong></p>
+
+<ul><li><strong>Composability</strong> — chains can be plugged into other chains</li><li><strong>Observability</strong> — every chain fires callbacks at start and end</li><li><strong>Reusability</strong> — define a chain once, call it from anywhere</li><li><strong>Testability</strong> — swap in a mock LLM during tests</li></ul>
+
+<h3 id="chaining-chains-together">Chaining Chains Together</h3>
+
+<p><code>SequentialChain</code> runs chains in sequence, passing the output of each as an input to the next:</p>
+
+<pre><code class="language-typescript">import { SequentialChain, SimpleSequentialChain } from 'fireworks-plus-plus'
+
+// SimpleSequentialChain: each chain has exactly one input/output
+const pipeline = new SimpleSequentialChain([extractChain, summarizeChain, translateChain])
+const result = await pipeline.call({ input: rawDocument })</code></pre>
+
+<hr>
+
+<h2 id="prompts">Prompts</h2>
+
+<p>A <strong>Prompt Template</strong> is a reusable string (or set of messages) with placeholders that get filled at runtime.</p>
+
+<h3 id="prompttemplate">PromptTemplate</h3>
+
+<p>For single-string LLMs:</p>
+
+<pre><code class="language-typescript">import { PromptTemplate } from 'fireworks-plus-plus'
+
+const prompt = PromptTemplate.fromTemplate(
+  'You are a {role}. Answer in {language}: {question}'
+)
+
+// Variables are inferred automatically: ["role", "language", "question"]
+const formatted = prompt.format({
+  role: 'scientist',
+  language: 'English',
+  question: 'What is dark matter?'
+})</code></pre>
+
+<h3 id="chatprompttemplate">ChatPromptTemplate</h3>
+
+<p>For chat models, which take a list of messages:</p>
+
+<pre><code class="language-typescript">import { ChatPromptTemplate } from 'fireworks-plus-plus'
+
+const prompt = ChatPromptTemplate.fromMessages([
+  ['system', 'You are a helpful {domain} expert.'],
+  ['human', '{question}']
+])
+
+const messages = prompt.formatMessages({
+  domain: 'TypeScript',
+  question: 'How do mapped types work?'
+})
+// Returns: [{ role: 'system', content: '...' }, { role: 'human', content: '...' }]</code></pre>
+
+<h3 id="fewshotprompttemplate">FewShotPromptTemplate</h3>
+
+<p>Include worked examples to guide the model:</p>
+
+<pre><code class="language-typescript">import { FewShotPromptTemplate } from 'fireworks-plus-plus'
+
+const prompt = new FewShotPromptTemplate({
+  examples: [
+    { input: 'happy', output: 'sad' },
+    { input: 'tall', output: 'short' }
+  ],
+  exampleTemplate: 'Input: {input}\nOutput: {output}',
+  prefix: 'Give the antonym of each word.',
+  suffix: 'Input: {word}\nOutput:',
+  inputVariables: ['word']
+})</code></pre>
+
+<hr>
+
+<h2 id="agents">Agents</h2>
+
+<p>An <strong>Agent</strong> is a loop that uses an LLM to decide which actions to take. Unlike a chain, which executes a fixed sequence of steps, an agent reasons dynamically about what to do next based on the current context.</p>
+
+<p>The agent loop works like this:</p>
+
+<ol><li>The agent receives a question or task.</li><li>The LLM decides whether to use a tool or answer directly.</li><li>If a tool is needed, the tool is invoked and the result is fed back to the LLM.</li><li>This repeats until the LLM produces a final answer.</li></ol>
+
+<p>This pattern is known as <strong>ReAct</strong> (Reasoning + Acting).</p>
+
+<h3 id="how-an-agent-differs-from-a-chain">How an Agent Differs from a Chain</h3>
+
+<table><thead><tr><th>Aspect</th><th>Chain</th><th>Agent</th></tr></thead><tbody><tr><td>Control flow</td><td>Fixed, predetermined</td><td>Dynamic, LLM-driven</td></tr>
+<tr><td>Tool use</td><td>Optional</td><td>Core mechanism</td></tr>
+<tr><td>Iterations</td><td>One pass</td><td>Multiple (up to maxIterations)</td></tr>
+<tr><td>Predictability</td><td>High</td><td>Lower, but more capable</td></tr></tbody></table>
+
+<pre><code class="language-typescript">// A chain always executes the same steps in the same order
+const chain = new SequentialChain([step1, step2, step3])
+
+// An agent decides which steps to take based on LLM reasoning
+// (Agent implementation — see agents.md for full details)</code></pre>
+
+<hr>
+
+<h2 id="tools">Tools</h2>
+
+<p>A <strong>Tool</strong> is a named, callable capability that an agent can invoke. Every tool has a <code>name</code>, a <code>description</code> (which the LLM reads to decide when to use it), and a <code>call()</code> method.</p>
+
+<pre><code class="language-typescript">import { BaseTool, DynamicTool } from 'fireworks-plus-plus'
+
+// Create a tool from any async function
+const currentTimeTool = new DynamicTool({
+  name: 'current_time',
+  description: 'Returns the current UTC date and time.',
+  func: async (_input: string) =&gt; ({
+    output: new Date().toISOString()
+  })
+})
+
+const result = await currentTimeTool.run('')
+console.log(result) // "2026-04-02T10:30:00.000Z"</code></pre>
+
+<h3 id="built-in-tools">Built-in Tools</h3>
+
+<table><thead><tr><th>Tool</th><th>Name</th><th>What it does</th></tr></thead><tbody><tr><td><code>CalculatorTool</code></td><td><code>calculator</code></td><td>Evaluates math expressions</td></tr>
+<tr><td><code>ResearchTool</code></td><td><code>research</code></td><td>Wikipedia and web lookups</td></tr>
+<tr><td><code>BrowserTool</code></td><td><code>browser</code></td><td>Web navigation and page interaction</td></tr>
+<tr><td><code>SSHTool</code></td><td><code>ssh</code></td><td>Remote command execution</td></tr>
+<tr><td><code>DocumentTool</code></td><td><code>document</code></td><td>TXT/Markdown/HTML/JSON/CSV generation</td></tr>
+<tr><td><code>EditorTool</code></td><td><code>editor</code></td><td>Workspace file read/write/open operations</td></tr></tbody></table>
+
+<h3 id="tool-callbacks">Tool Callbacks</h3>
+
+<p>Tools fire <code>onToolStart</code> and <code>onToolEnd</code> (or <code>onToolError</code>) callbacks, giving you full visibility into tool usage:</p>
+
+<pre><code class="language-typescript">import { CalculatorTool, LoggingCallbackHandler } from 'fireworks-plus-plus'
+
+const logger = new LoggingCallbackHandler({ level: 'debug' })
+const calc = new CalculatorTool({ callbacks: [logger], verbose: true })
+
+await calc.run('sqrt(144) + 10')
+// [Fireworks++] [TOOL:START] tool="calculator" input="sqrt(144) + 10"
+// [Fireworks++] [TOOL:END]   output="22"</code></pre>
+
+<hr>
+
+<h2 id="memory">Memory</h2>
+
+<p><strong>Memory</strong> persists conversation history and makes it available to chains and agents across multiple calls. Without memory, every call to an LLM is stateless.</p>
+
+<p>All memory classes implement <code>loadMemoryVariables()</code> and <code>saveContext()</code>.</p>
+
+<h3 id="conversationbuffermemory">ConversationBufferMemory</h3>
+
+<p>Stores every message verbatim. Simple and reliable for short conversations.</p>
+
+<pre><code class="language-typescript">import { ConversationBufferMemory } from 'fireworks-plus-plus'
+
+const memory = new ConversationBufferMemory()
+await memory.saveContext({ input: 'Hello' }, { output: 'Hi there!' })
+await memory.saveContext({ input: 'My name is Bob' }, { output: 'Nice to meet you, Bob.' })
+
+const vars = await memory.loadMemoryVariables()
+console.log(vars['history'])
+// Human: Hello
+// AI: Hi there!
+// Human: My name is Bob
+// AI: Nice to meet you, Bob.</code></pre>
+
+<h3 id="conversationwindowmemory">ConversationWindowMemory</h3>
+
+<p>Keeps only the last <code>k</code> exchanges to prevent unbounded context growth:</p>
+
+<pre><code class="language-typescript">import { ConversationWindowMemory } from 'fireworks-plus-plus'
+
+const memory = new ConversationWindowMemory({ k: 3 })
+// Only the 3 most recent human+AI pairs are retained</code></pre>
+
+<h3 id="conversationsummarymemory">ConversationSummaryMemory</h3>
+
+<p>Uses an LLM to compress old conversation history into a running summary. Ideal for long-running sessions.</p>
+
+<pre><code class="language-typescript">import { ChatAnthropic, ConversationSummaryMemory } from 'fireworks-plus-plus'
+
+const memory = new ConversationSummaryMemory({
+  llm: new ChatAnthropic(),
+  maxTokenLimit: 2000 // Summarise when estimated tokens exceed this
+})</code></pre>
+
+<h3 id="threadedmemory">ThreadedMemory</h3>
+
+<p>Manages multiple independent conversation threads, similar to how chat apps work with separate conversation channels.</p>
+
+<pre><code class="language-typescript">import { ThreadedMemory } from 'fireworks-plus-plus'
+
+const memory = new ThreadedMemory()
+
+const thread1 = memory.createThread()
+const thread2 = memory.createThread()
+
+// Add messages to specific threads
+await memory.addToThread(thread1, { role: 'human', content: 'Hello from thread 1' })
+await memory.addToThread(thread2, { role: 'human', content: 'Hello from thread 2' })
+
+// Switch which thread is active
+memory.setActiveThread(thread2)
+const vars = await memory.loadMemoryVariables()
+// Returns thread2's messages</code></pre>
+
+<hr>
+
+<h2 id="output-parsers">Output Parsers</h2>
+
+<p>LLMs produce plain text. <strong>Output Parsers</strong> transform that text into typed TypeScript values, making it easy to work with structured data.</p>
+
+<h3 id="jsonoutputparser">JsonOutputParser</h3>
+
+<p>Extracts a JSON object from LLM output, handling markdown code fences automatically:</p>
+
+<pre><code class="language-typescript">import { JsonOutputParser } from 'fireworks-plus-plus'
+
+const parser = new JsonOutputParser()
+
+// Works with raw JSON, markdown-fenced JSON, or JSON embedded in text
+const result = parser.parse('```json\n{"name": "Alice", "age": 30}\n```')
+// =&gt; { name: "Alice", age: 30 }
+
+// Embed format instructions in your prompt
+console.log(parser.getFormatInstructions())
+// "Respond with a valid JSON object."</code></pre>
+
+<h3 id="structuredoutputparser">StructuredOutputParser</h3>
+
+<p>Define a schema with typed fields and descriptions, then parse the LLM output accordingly:</p>
+
+<pre><code class="language-typescript">import { StructuredOutputParser } from 'fireworks-plus-plus'
+
+const parser = StructuredOutputParser.fromNamesAndDescriptions({
+  title: 'The title of the article',
+  summary: 'A one-paragraph summary',
+  sentiment: 'Positive, Negative, or Neutral'
+})
+
+const result = parser.parse('title: AI Advances\nsummary: Researchers made a breakthrough...\nsentiment: Positive')
+// =&gt; { title: "AI Advances", summary: "...", sentiment: "Positive" }</code></pre>
+
+<h3 id="list-parsers">List Parsers</h3>
+
+<p>Parse comma-separated, numbered, or newline-separated lists:</p>
+
+<pre><code class="language-typescript">import { CommaSeparatedListOutputParser, NumberedListOutputParser } from 'fireworks-plus-plus'
+
+const listParser = new CommaSeparatedListOutputParser()
+const items = listParser.parse('apples, bananas, cherries')
+// =&gt; ["apples", "bananas", "cherries"]
+
+const numberedParser = new NumberedListOutputParser()
+const steps = numberedParser.parse('1. Install Node.js\n2. Run npm install\n3. Start the app')
+// =&gt; ["Install Node.js", "Run npm install", "Start the app"]</code></pre>
+
+<hr>
+
+<h2 id="routing">Routing</h2>
+
+<p><strong>Intent Routing</strong> classifies an input string into one of the built-in <code>RouteKind</code> values (<code>llm</code>, <code>ssh</code>, <code>browser</code>, <code>research</code>, <code>document</code>, <code>editor</code>, <code>skill</code>, <code>calculator</code>) and dispatches to the appropriate handler.</p>
+
+<h3 id="heuristicrouter">HeuristicRouter</h3>
+
+<p>Fast, deterministic, no LLM needed. Uses regular expression patterns:</p>
+
+<pre><code class="language-typescript">import { HeuristicRouter } from 'fireworks-plus-plus'
+
+const router = new HeuristicRouter()
+
+const decision = router.route('Calculate 2 + 2')
+console.log(decision.kind)       // "calculator"
+console.log(decision.confidence) // 0.92
+
+const decision2 = router.route('Who invented the telephone?')
+console.log(decision2.kind)      // "research"</code></pre>
+
+<h3 id="intentrouter">IntentRouter</h3>
+
+<p>Combines heuristic routing with optional LLM fallback for ambiguous inputs:</p>
+
+<pre><code class="language-typescript">import { ChatAnthropic, IntentRouter } from 'fireworks-plus-plus'
+
+// Without LLM — heuristic only
+const fastRouter = new IntentRouter()
+
+// With LLM — uses LLM when heuristic confidence is below 0.7
+const smartRouter = new IntentRouter(new ChatAnthropic(), {
+  confidenceThreshold: 0.7,
+  timeout: 10_000
+})
+
+const decision = await smartRouter.route('Help me write a proposal for the board')
+console.log(decision.kind) // "document"</code></pre>
+
+<h3 id="routerchain">RouterChain</h3>
+
+<p>Route requests to different destination chains:</p>
+
+<pre><code class="language-typescript">import { RouterChain, IntentRouter } from 'fireworks-plus-plus'
+
+const router = new IntentRouter()
+const destinations = {
+  research: researchChain,
+  calculator: calcChain,
+  llm: generalChain
+}
+
+const routerChain = new RouterChain(router, destinations, generalChain)
+const result = await routerChain.call({ input: 'What is 15% of 340?' })
+console.log(result.output)      // The calculated answer
+console.log(result.destination) // "calculator"</code></pre>
+
+<hr>
+
+<h2 id="safety">Safety</h2>
+
+<p>The <code>SafetyPolicy</code> checks user input against a set of harm categories before it reaches your LLM or tools. Input is blocked only when it matches both a harmful pattern <strong>and</strong> an actionable intent pattern.</p>
+
+<pre><code class="language-typescript">import { SafetyPolicy } from 'fireworks-plus-plus'
+
+const policy = new SafetyPolicy()
+
+const safe = policy.check('Tell me about the history of encryption.')
+console.log(safe.allowed) // true
+
+const blocked = policy.check('How do I build a reverse shell backdoor?')
+console.log(blocked.allowed)         // false
+console.log(blocked.reason)          // "Input flagged as potentially harmful..."
+console.log(blocked.flaggedPatterns) // ["remote-access-tool"]</code></pre>
+
+<p><strong>Categories checked:</strong> security exploits, malware, dangerous system commands, credential theft, injection attacks, drug synthesis, weapons, violence, child safety, fraud, network intrusion, reverse shells, data exfiltration, privilege escalation.</p>
+
+<h3 id="integrating-safety-into-your-pipeline">Integrating Safety into Your Pipeline</h3>
+
+<pre><code class="language-typescript">import { SafetyPolicy, ChatAnthropic } from 'fireworks-plus-plus'
+
+const policy = new SafetyPolicy()
+const llm = new ChatAnthropic()
+
+async function safeChat(userInput: string): Promise&lt;string&gt; {
+  const check = policy.check(userInput)
+  if (!check.allowed) {
+    return `I cannot help with that request. Reason: ${check.reason}`
+  }
+  const reply = await llm.call([{ role: 'human', content: userInput }])
+  return reply.content
+}</code></pre>
+
+<hr>
+
+<h2 id="callbacks">Callbacks</h2>
+
+<p><strong>Callbacks</strong> give you visibility into every stage of execution — LLM calls, chain execution, tool invocations, and agent actions. Implement the <code>CallbackHandler</code> interface to hook into these events.</p>
+
+<pre><code class="language-typescript">import { LoggingCallbackHandler, ChatAnthropic, LLMChain, PromptTemplate } from 'fireworks-plus-plus'
+
+const logger = new LoggingCallbackHandler({
+  level: 'info',
+  prefix: '[MyApp]'
+})
+
+const llm = new ChatAnthropic({ callbacks: [logger] })
+const chain = new LLMChain(llm, PromptTemplate.fromTemplate('{input}'), {
+  callbacks: [logger]
+})
+
+await chain.run('Hello!')
+// [MyApp] [CHAIN:START] chain="llm_chain" inputKeys=[input]
+// [MyApp] [LLM:START]   model="chat-anthropic" prompts=1
+// [MyApp] [LLM:END]     generations=1
+// [MyApp] [CHAIN:END]   outputKeys=[text]</code></pre>
+
+<p>See <a href="./callbacks.md">Callbacks</a> for the full reference.</p>
+
+  </main>
+</body>
+</html>

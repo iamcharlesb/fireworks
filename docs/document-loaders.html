@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Loaders and Text Splitters — Fireworks++</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f9fafb;
+      --surface: #ffffff;
+      --border: #e2e6ef;
+      --accent: #e05a1a;
+      --accent2: #c04a0e;
+      --text: #1a1d2e;
+      --muted: #6b7280;
+      --code-bg: #f3f4f6;
+      --link: #2563eb;
+      --nav-w: 260px;
+    }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    nav {
+      width: var(--nav-w);
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 0;
+      position: fixed;
+      top: 0; left: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-brand {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-brand .logo {
+      font-size: 22px;
+    }
+    .nav-brand h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .nav-brand span {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 12px 0;
+    }
+    nav ul li a {
+      display: block;
+      padding: 7px 24px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.15s, background 0.15s;
+      border-left: 3px solid transparent;
+    }
+    nav ul li a:hover {
+      color: var(--text);
+      background: rgba(255,107,43,0.06);
+    }
+    nav ul li.active a {
+      color: var(--accent2);
+      border-left-color: var(--accent);
+      background: rgba(255,107,43,0.08);
+      font-weight: 600;
+    }
+
+    /* ── Main content ── */
+    main {
+      margin-left: var(--nav-w);
+      flex: 1;
+      max-width: 860px;
+      padding: 52px 60px;
+    }
+
+    h1 { font-size: 2rem; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.5px; }
+    h2 { font-size: 1.4rem; font-weight: 700; margin: 40px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.1rem; font-weight: 600; margin: 28px 0 10px; }
+    h4 { font-size: 1rem; font-weight: 600; margin: 20px 0 8px; color: var(--accent2); }
+    h5, h6 { font-size: 0.95rem; font-weight: 600; margin: 16px 0 6px; color: var(--muted); }
+
+    p { margin: 12px 0; color: var(--text); }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    code {
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 0.85em;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #c2410c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      overflow-x: auto;
+      margin: 18px 0;
+      position: relative;
+    }
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: #374151;
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 0.88em;
+      line-height: 1.6;
+    }
+
+    /* Syntax-ish colour hints */
+    pre code .kw { color: #c678dd; }
+    pre code .st { color: #98c379; }
+    pre code .cm { color: #5c6370; font-style: italic; }
+
+    blockquote {
+      border-left: 4px solid var(--accent);
+      background: rgba(255,107,43,0.06);
+      padding: 14px 20px;
+      border-radius: 0 6px 6px 0;
+      margin: 16px 0;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    ul, ol {
+      padding-left: 24px;
+      margin: 12px 0;
+    }
+    li { margin: 5px 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.9rem;
+    }
+    th {
+      background: var(--surface);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      color: var(--accent2);
+    }
+    td {
+      padding: 9px 14px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+
+    strong { color: #111; font-weight: 700; }
+    em { color: var(--accent2); font-style: italic; }
+    del { color: var(--muted); }
+
+    /* ── Badge pills on homepage ── */
+    .badge {
+      display: inline-block;
+      background: rgba(255,107,43,0.15);
+      color: var(--accent2);
+      border: 1px solid rgba(255,107,43,0.3);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    @media (max-width: 768px) {
+      nav { display: none; }
+      main { margin-left: 0; padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-brand">
+      <span class="logo">🔥</span>
+      <div>
+        <h1>Fireworks++</h1>
+        <span>v0.1.0</span>
+      </div>
+    </div>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="concepts.html">Concepts</a></li>
+<li><a href="llms.html">LLMs</a></li>
+<li><a href="chains.html">Chains</a></li>
+<li><a href="agents.html">Agents</a></li>
+<li><a href="tools.html">Tools</a></li>
+<li><a href="memory.html">Memory</a></li>
+<li><a href="prompts.html">Prompts</a></li>
+<li><a href="output-parsers.html">Output Parsers</a></li>
+<li class="active"><a href="document-loaders.html">Document Loaders</a></li>
+<li><a href="vector-stores.html">Vector Stores</a></li>
+<li><a href="callbacks.html">Callbacks</a></li>
+<li><a href="cli.html">CLI</a></li>
+<li><a href="checkpoints.html">Checkpoints</a></li>
+<li><a href="evaluations.html">Evaluations</a></li>
+<li><a href="simple-api.html">Simple API</a></li>
+<li><a href="mcp.html">MCP</a></li>
+<li><a href="auth.html">Auth</a></li>
+<li><a href="governance.html">Governance</a></li>
+<li><a href="plugins.html">Plugins</a></li>
+<li><a href="integrations.html">Integrations</a></li>
+<li><a href="monitoring.html">Monitoring</a></li>
+<li><a href="server.html">Server</a></li>
+<li><a href="python-sdk.html">Python SDK</a></li>
+<li><a href="workflows.html">Workflows</a></li>
+<li><a href="routing.html">Routing</a></li>
+<li><a href="safety.html">Safety</a></li>
+<li><a href="api-reference.html">API Reference</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h1 id="document-loaders-and-text-splitters">Document Loaders and Text Splitters</h1>
+
+<p>Document loaders read files from disk (or other sources) and return <code>Document</code> objects. Text splitters break large documents into smaller chunks suitable for embedding and retrieval.</p>
+
+<h2 id="document-shape">Document Shape</h2>
+
+<pre><code class="language-typescript">interface Document {
+  pageContent: string              // The text content
+  metadata: Record&lt;string, unknown&gt; // Source, filename, page number, etc.
+  id?: string
+}</code></pre>
+
+<hr>
+
+<h2 id="basedocumentloader">BaseDocumentLoader</h2>
+
+<p>All document loaders extend <code>BaseDocumentLoader</code>:</p>
+
+<pre><code class="language-typescript">abstract class BaseDocumentLoader {
+  // Load all documents from the source
+  abstract load(): Promise&lt;Document[]&gt;
+
+  // Load and split in one step
+  loadAndSplit(splitter?: BaseTextSplitter): Promise&lt;Document[]&gt;
+
+  // Lazy async generator — load one document at a time
+  lazyLoad(): AsyncGenerator&lt;Document&gt;
+}</code></pre>
+
+<hr>
+
+<h2 id="textloader">TextLoader</h2>
+
+<p>Loads a plain text file from disk as a single <code>Document</code>. Metadata includes the file path, name, size, and extension.</p>
+
+<pre><code class="language-typescript">import { TextLoader } from 'fireworks-plus-plus'
+
+const loader = new TextLoader('./data/readme.txt')
+const docs = await loader.load()
+
+console.log(docs.length)              // 1
+console.log(docs[0].pageContent)      // Full file contents
+console.log(docs[0].metadata)
+// {
+//   source: '/absolute/path/data/readme.txt',
+//   fileName: 'readme.txt',
+//   size: 4096,
+//   extension: '.txt'
+// }</code></pre>
+
+<h3 id="config">Config</h3>
+
+<pre><code class="language-typescript">new TextLoader(
+  filePath: string,
+  encoding: BufferEncoding = 'utf-8'
+)</code></pre>
+
+<h3 id="loading-multiple-files">Loading Multiple Files</h3>
+
+<pre><code class="language-typescript">import { TextLoader } from 'fireworks-plus-plus'
+
+const files = ['./docs/faq.txt', './docs/guide.txt', './docs/changelog.txt']
+
+const allDocs = []
+for (const file of files) {
+  const loader = new TextLoader(file)
+  const docs = await loader.load()
+  allDocs.push(...docs)
+}
+
+console.log(`Loaded ${allDocs.length} documents`)
+allDocs.forEach(d =&gt; console.log(d.metadata['fileName']))</code></pre>
+
+<h3 id="lazy-loading">Lazy Loading</h3>
+
+<p>For large files or many files, use <code>lazyLoad()</code> to process one document at a time:</p>
+
+<pre><code class="language-typescript">const loader = new TextLoader('./large-corpus.txt')
+for await (const doc of loader.lazyLoad()) {
+  // Process each document without loading all into memory
+  await processDocument(doc)
+}</code></pre>
+
+<hr>
+
+<h2 id="building-custom-document-loaders">Building Custom Document Loaders</h2>
+
+<p>Extend <code>BaseDocumentLoader</code> to load from any source — databases, APIs, cloud storage, etc.</p>
+
+<pre><code class="language-typescript">import { BaseDocumentLoader } from 'fireworks-plus-plus'
+import type { Document } from 'fireworks-plus-plus'
+
+export class JsonFileLoader extends BaseDocumentLoader {
+  constructor(private filePath: string, private textField: string) {
+    super()
+  }
+
+  async load(): Promise&lt;Document[]&gt; {
+    const { readFile } = await import('fs/promises')
+    const { resolve, basename } = await import('path')
+
+    const absolutePath = resolve(this.filePath)
+    const rawText = await readFile(absolutePath, 'utf-8')
+    const data = JSON.parse(rawText) as unknown[]
+
+    if (!Array.isArray(data)) {
+      return [{
+        pageContent: String(data),
+        metadata: { source: absolutePath }
+      }]
+    }
+
+    return data.map((item, index) =&gt; ({
+      pageContent: String((item as Record&lt;string, unknown&gt;)[this.textField] ?? JSON.stringify(item)),
+      metadata: {
+        source: absolutePath,
+        fileName: basename(absolutePath),
+        index
+      }
+    }))
+  }
+}
+
+// Usage
+const loader = new JsonFileLoader('./articles.json', 'body')
+const docs = await loader.load()</code></pre>
+
+<h3 id="api-loader-example">API Loader Example</h3>
+
+<pre><code class="language-typescript">import { BaseDocumentLoader } from 'fireworks-plus-plus'
+import type { Document } from 'fireworks-plus-plus'
+
+interface NewsArticle {
+  title: string
+  content: string
+  publishedAt: string
+  url: string
+}
+
+export class NewsApiLoader extends BaseDocumentLoader {
+  constructor(
+    private apiKey: string,
+    private query: string,
+    private pageSize = 10
+  ) {
+    super()
+  }
+
+  async load(): Promise&lt;Document[]&gt; {
+    const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(this.query)}&amp;pageSize=${this.pageSize}&amp;apiKey=${this.apiKey}`
+    const response = await fetch(url)
+    const data = await response.json() as { articles: NewsArticle[] }
+
+    return data.articles.map(article =&gt; ({
+      pageContent: `${article.title}\n\n${article.content}`,
+      metadata: {
+        source: article.url,
+        publishedAt: article.publishedAt,
+        title: article.title
+      }
+    }))
+  }
+}</code></pre>
+
+<hr>
+
+<h2 id="text-splitters">Text Splitters</h2>
+
+<p>The <code>text_splitters</code> module is a stub — the <code>BaseTextSplitter</code> interface is defined but concrete splitter implementations follow the same pattern. You can implement your own:</p>
+
+<pre><code class="language-typescript">export abstract class BaseTextSplitter {
+  abstract splitText(text: string): Promise&lt;string[]&gt;
+
+  async splitDocuments(documents: Document[]): Promise&lt;Document[]&gt; {
+    const results: Document[] = []
+    for (const doc of documents) {
+      const chunks = await this.splitText(doc.pageContent)
+      for (let i = 0; i &lt; chunks.length; i++) {
+        results.push({
+          pageContent: chunks[i],
+          metadata: { ...doc.metadata, chunkIndex: i, totalChunks: chunks.length }
+        })
+      }
+    }
+    return results
+  }
+}</code></pre>
+
+<h3 id="charactertextsplitter-custom-implementation">CharacterTextSplitter (Custom Implementation)</h3>
+
+<pre><code class="language-typescript">import type { Document } from 'fireworks-plus-plus'
+
+export class CharacterTextSplitter {
+  constructor(
+    private chunkSize = 1000,
+    private chunkOverlap = 200,
+    private separator = '\n\n'
+  ) {}
+
+  splitText(text: string): string[] {
+    const chunks: string[] = []
+    const splits = text.split(this.separator)
+    let currentChunk = ''
+
+    for (const split of splits) {
+      const separator = currentChunk ? this.separator : ''
+      if ((currentChunk + separator + split).length &lt;= this.chunkSize) {
+        currentChunk += separator + split
+      } else {
+        if (currentChunk) chunks.push(currentChunk.trim())
+        currentChunk = split
+      }
+    }
+
+    if (currentChunk.trim()) chunks.push(currentChunk.trim())
+
+    // Apply overlap
+    if (this.chunkOverlap &gt; 0 &amp;&amp; chunks.length &gt; 1) {
+      return this.applyOverlap(chunks)
+    }
+    return chunks
+  }
+
+  private applyOverlap(chunks: string[]): string[] {
+    const overlapped: string[] = [chunks[0]]
+    for (let i = 1; i &lt; chunks.length; i++) {
+      const prev = chunks[i - 1]
+      const overlap = prev.slice(-this.chunkOverlap)
+      overlapped.push(overlap + '\n' + chunks[i])
+    }
+    return overlapped
+  }
+
+  async splitDocuments(documents: Document[]): Promise&lt;Document[]&gt; {
+    const results: Document[] = []
+    for (const doc of documents) {
+      const chunks = this.splitText(doc.pageContent)
+      chunks.forEach((chunk, i) =&gt; {
+        results.push({
+          pageContent: chunk,
+          metadata: { ...doc.metadata, chunkIndex: i, totalChunks: chunks.length }
+        })
+      })
+    }
+    return results
+  }
+}</code></pre>
+
+<h3 id="recursivecharactertextsplitter-custom-implementation">RecursiveCharacterTextSplitter (Custom Implementation)</h3>
+
+<p>Splits on progressively smaller separators until chunks are below the size limit:</p>
+
+<pre><code class="language-typescript">export class RecursiveCharacterTextSplitter {
+  private separators: string[]
+
+  constructor(
+    private chunkSize = 1000,
+    private chunkOverlap = 200
+  ) {
+    this.separators = ['\n\n', '\n', '. ', ' ', '']
+  }
+
+  private splitWithSeparator(text: string, separator: string): string[] {
+    if (separator === '') {
+      return text.split('').reduce((acc, char) =&gt; {
+        const last = acc[acc.length - 1] ?? ''
+        if (last.length &lt; this.chunkSize) {
+          acc[acc.length - 1] = last + char
+        } else {
+          acc.push(char)
+        }
+        return acc
+      }, [''])
+    }
+    return text.split(separator)
+  }
+
+  splitText(text: string, separators = this.separators): string[] {
+    const [separator, ...remainingSeparators] = separators
+    const splits = this.splitWithSeparator(text, separator ?? '')
+
+    const chunks: string[] = []
+    let current = ''
+
+    for (const split of splits) {
+      const candidate = current ? current + (separator ?? '') + split : split
+      if (candidate.length &lt;= this.chunkSize) {
+        current = candidate
+      } else {
+        if (current) chunks.push(current.trim())
+        if (split.length &gt; this.chunkSize &amp;&amp; remainingSeparators.length &gt; 0) {
+          // Recurse with next separator
+          chunks.push(...this.splitText(split, remainingSeparators))
+          current = ''
+        } else {
+          current = split
+        }
+      }
+    }
+
+    if (current.trim()) chunks.push(current.trim())
+    return chunks.filter(c =&gt; c.length &gt; 0)
+  }
+
+  async splitDocuments(documents: Document[]): Promise&lt;Document[]&gt; {
+    const results: Document[] = []
+    for (const doc of documents) {
+      const chunks = this.splitText(doc.pageContent)
+      chunks.forEach((chunk, i) =&gt; {
+        results.push({
+          pageContent: chunk,
+          metadata: { ...doc.metadata, chunkIndex: i, totalChunks: chunks.length }
+        })
+      })
+    }
+    return results
+  }
+}</code></pre>
+
+<hr>
+
+<h2 id="full-rag-pipeline-example">Full RAG Pipeline Example</h2>
+
+<pre><code class="language-typescript">import {
+  TextLoader,
+  InMemoryVectorStore,
+  FakeEmbeddings,
+  ChatAnthropic,
+  LLMChain,
+  PromptTemplate
+} from 'fireworks-plus-plus'
+
+// Custom splitter (from above)
+// import { RecursiveCharacterTextSplitter } from './my-splitter'
+
+async function buildRAGPipeline(filePath: string) {
+  // 1. Load the document
+  const loader = new TextLoader(filePath)
+  const docs = await loader.load()
+  console.log(`Loaded ${docs.length} document(s)`)
+
+  // 2. Split into chunks
+  const splitter = new RecursiveCharacterTextSplitter({
+    chunkSize: 500,
+    chunkOverlap: 50
+  })
+  const chunks = await splitter.splitDocuments(docs)
+  console.log(`Split into ${chunks.length} chunks`)
+
+  // 3. Embed and store
+  const embeddings = new FakeEmbeddings(256) // Replace with real embeddings in production
+  const vectorStore = await InMemoryVectorStore.fromDocuments(chunks, embeddings)
+  console.log(`Vector store has ${vectorStore.size} entries`)
+
+  // 4. Build a QA chain
+  const llm = new ChatAnthropic()
+  const qaPrompt = PromptTemplate.fromTemplate(
+    `Use the following context to answer the question.
+
+Context:
+{context}
+
+Question: {question}
+
+Answer:`
+  )
+  const qaChain = new LLMChain(llm, qaPrompt)
+
+  // 5. Retrieval + generation function
+  async function ask(question: string): Promise&lt;string&gt; {
+    const relevantDocs = await vectorStore.similaritySearch(question, 3)
+    const context = relevantDocs.map(d =&gt; d.pageContent).join('\n\n')
+    return qaChain.run({ context, question })
+  }
+
+  return { vectorStore, ask }
+}
+
+// Use the pipeline
+const { ask } = await buildRAGPipeline('./docs/technical-guide.txt')
+const answer = await ask('How do I configure the authentication settings?')
+console.log(answer)</code></pre>
+
+  </main>
+</body>
+</html>
