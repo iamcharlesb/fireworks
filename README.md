@@ -247,3 +247,7 @@ npx ts-node examples/22-mcp-client-server.ts
 ## License
 
 Apache 2.0 — see [LICENSE](./LICENSE)
+
+## Author
+
+Charles Barathidass
