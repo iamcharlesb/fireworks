@@ -249,6 +249,10 @@ npx ts-node examples/22-mcp-client-server.ts
 
 Apache 2.0 — see [LICENSE](./LICENSE)
 
+## Status
+
+> **Work in Progress** — Fireworks++ is actively being developed. APIs may evolve and new modules are being added. Contributions, feedback, and ideas are very welcome.
+
 ## Author
 
 Charles Barathidass
