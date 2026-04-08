@@ -1,5 +1,6 @@
 # Fireworks++
 
+> **Simple | Secured | Scalable**
 > A TypeScript-first agentic AI framework — Build LLM-powered applications with composable chains, agents, tools, and memory.
 
 ## What is Fireworks++?
