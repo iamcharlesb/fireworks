@@ -1,0 +1,81 @@
+{
+  "name": "fireworks-plus-plus",
+  "version": "0.1.0",
+  "description": "Fireworks++ — A TypeScript-first agentic AI framework for building LLM-powered applications",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "fireworks-plus-plus": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./mcp": {
+      "import": "./dist/mcp/index.js",
+      "require": "./dist/mcp/index.js",
+      "types": "./dist/mcp/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -w -p tsconfig.build.json",
+    "test": "npm run build && node --test test/**/*.test.cjs",
+    "lint": "tsc -p tsconfig.build.json --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "langchain",
+    "llm",
+    "agents",
+    "ai",
+    "anthropic",
+    "openai",
+    "gemini",
+    "ollama",
+    "perplexity",
+    "rag",
+    "embeddings",
+    "vector-store",
+    "chains",
+    "prompts",
+    "memory",
+    "governance",
+    "monitoring",
+    "plugins",
+    "workflows"
+  ],
+  "author": "Fireworks++ Contributors",
+  "license": "Apache-2.0",
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.8.2",
+    "@types/node": "^22.0.0"
+  },
+  "peerDependencies": {
+    "@anthropic-ai/sdk": ">=0.20.0",
+    "openai": ">=4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@anthropic-ai/sdk": {
+      "optional": true
+    },
+    "openai": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fireworks-plus-plus/fireworks-plus-plus"
+  }
+}

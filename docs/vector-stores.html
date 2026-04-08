@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vector Stores — Fireworks++</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f9fafb;
+      --surface: #ffffff;
+      --border: #e2e6ef;
+      --accent: #e05a1a;
+      --accent2: #c04a0e;
+      --text: #1a1d2e;
+      --muted: #6b7280;
+      --code-bg: #f3f4f6;
+      --link: #2563eb;
+      --nav-w: 260px;
+    }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    nav {
+      width: var(--nav-w);
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 0;
+      position: fixed;
+      top: 0; left: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-brand {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-brand .logo {
+      font-size: 22px;
+    }
+    .nav-brand h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .nav-brand span {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 12px 0;
+    }
+    nav ul li a {
+      display: block;
+      padding: 7px 24px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.15s, background 0.15s;
+      border-left: 3px solid transparent;
+    }
+    nav ul li a:hover {
+      color: var(--text);
+      background: rgba(255,107,43,0.06);
+    }
+    nav ul li.active a {
+      color: var(--accent2);
+      border-left-color: var(--accent);
+      background: rgba(255,107,43,0.08);
+      font-weight: 600;
+    }
+
+    /* ── Main content ── */
+    main {
+      margin-left: var(--nav-w);
+      flex: 1;
+      max-width: 860px;
+      padding: 52px 60px;
+    }
+
+    h1 { font-size: 2rem; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.5px; }
+    h2 { font-size: 1.4rem; font-weight: 700; margin: 40px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.1rem; font-weight: 600; margin: 28px 0 10px; }
+    h4 { font-size: 1rem; font-weight: 600; margin: 20px 0 8px; color: var(--accent2); }
+    h5, h6 { font-size: 0.95rem; font-weight: 600; margin: 16px 0 6px; color: var(--muted); }
+
+    p { margin: 12px 0; color: var(--text); }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    code {
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 0.85em;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #c2410c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      overflow-x: auto;
+      margin: 18px 0;
+      position: relative;
+    }
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: #374151;
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 0.88em;
+      line-height: 1.6;
+    }
+
+    /* Syntax-ish colour hints */
+    pre code .kw { color: #c678dd; }
+    pre code .st { color: #98c379; }
+    pre code .cm { color: #5c6370; font-style: italic; }
+
+    blockquote {
+      border-left: 4px solid var(--accent);
+      background: rgba(255,107,43,0.06);
+      padding: 14px 20px;
+      border-radius: 0 6px 6px 0;
+      margin: 16px 0;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    ul, ol {
+      padding-left: 24px;
+      margin: 12px 0;
+    }
+    li { margin: 5px 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.9rem;
+    }
+    th {
+      background: var(--surface);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      color: var(--accent2);
+    }
+    td {
+      padding: 9px 14px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+
+    strong { color: #111; font-weight: 700; }
+    em { color: var(--accent2); font-style: italic; }
+    del { color: var(--muted); }
+
+    /* ── Badge pills on homepage ── */
+    .badge {
+      display: inline-block;
+      background: rgba(255,107,43,0.15);
+      color: var(--accent2);
+      border: 1px solid rgba(255,107,43,0.3);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    @media (max-width: 768px) {
+      nav { display: none; }
+      main { margin-left: 0; padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-brand">
+      <span class="logo">🔥</span>
+      <div>
+        <h1>Fireworks++</h1>
+        <span>v0.1.0</span>
+      </div>
+    </div>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="concepts.html">Concepts</a></li>
+<li><a href="llms.html">LLMs</a></li>
+<li><a href="chains.html">Chains</a></li>
+<li><a href="agents.html">Agents</a></li>
+<li><a href="tools.html">Tools</a></li>
+<li><a href="memory.html">Memory</a></li>
+<li><a href="prompts.html">Prompts</a></li>
+<li><a href="output-parsers.html">Output Parsers</a></li>
+<li><a href="document-loaders.html">Document Loaders</a></li>
+<li class="active"><a href="vector-stores.html">Vector Stores</a></li>
+<li><a href="callbacks.html">Callbacks</a></li>
+<li><a href="cli.html">CLI</a></li>
+<li><a href="checkpoints.html">Checkpoints</a></li>
+<li><a href="evaluations.html">Evaluations</a></li>
+<li><a href="simple-api.html">Simple API</a></li>
+<li><a href="mcp.html">MCP</a></li>
+<li><a href="auth.html">Auth</a></li>
+<li><a href="governance.html">Governance</a></li>
+<li><a href="plugins.html">Plugins</a></li>
+<li><a href="integrations.html">Integrations</a></li>
+<li><a href="monitoring.html">Monitoring</a></li>
+<li><a href="server.html">Server</a></li>
+<li><a href="python-sdk.html">Python SDK</a></li>
+<li><a href="workflows.html">Workflows</a></li>
+<li><a href="routing.html">Routing</a></li>
+<li><a href="safety.html">Safety</a></li>
+<li><a href="api-reference.html">API Reference</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h1 id="vector-stores">Vector Stores</h1>
+
+<p>Vector stores enable semantic (similarity) search over document collections. Documents are embedded into numerical vectors, stored, and later searched by comparing a query vector against all stored vectors using cosine similarity.</p>
+
+<h2 id="vectorstore-base">VectorStore Base</h2>
+
+<pre><code class="language-typescript">abstract class VectorStore {
+  constructor(embeddings: BaseEmbeddings)
+
+  // Add documents (embeds them first)
+  abstract addDocuments(documents: Document[]): Promise&lt;void&gt;
+
+  // Add pre-computed vectors
+  abstract addVectors(vectors: number[][], documents: Document[]): Promise&lt;void&gt;
+
+  // Search with scores
+  abstract similaritySearchWithScore(
+    query: string,
+    k: number,
+    filter?: Record&lt;string, unknown&gt;
+  ): Promise&lt;SimilarityResult[]&gt;
+
+  // Search without scores (convenience)
+  similaritySearch(
+    query: string,
+    k: number,
+    filter?: Record&lt;string, unknown&gt;
+  ): Promise&lt;Document[]&gt;
+}
+
+interface SimilarityResult {
+  document: Document
+  score: number   // Cosine similarity: 1.0 = identical, 0.0 = unrelated
+}</code></pre>
+
+<hr>
+
+<h2 id="inmemoryvectorstore">InMemoryVectorStore</h2>
+
+<p>A fully in-memory vector store that uses cosine similarity. No external dependencies, no network calls. Ideal for development, testing, and production datasets up to hundreds of thousands of documents.</p>
+
+<pre><code class="language-typescript">import { InMemoryVectorStore, FakeEmbeddings } from 'fireworks-plus-plus'
+import type { Document } from 'fireworks-plus-plus'
+
+const embeddings = new FakeEmbeddings(128)
+const store = new InMemoryVectorStore(embeddings)
+
+// Add documents
+const docs: Document[] = [
+  { pageContent: 'The capital of France is Paris.', metadata: { topic: 'geography' } },
+  { pageContent: 'Paris is famous for the Eiffel Tower.', metadata: { topic: 'landmarks' } },
+  { pageContent: 'JavaScript is a programming language.', metadata: { topic: 'tech' } },
+  { pageContent: 'TypeScript adds types to JavaScript.', metadata: { topic: 'tech' } }
+]
+
+await store.addDocuments(docs)
+console.log(store.size) // 4
+
+// Similarity search — top 2 most relevant to the query
+const results = await store.similaritySearch('What is special about France?', 2)
+results.forEach(doc =&gt; {
+  console.log(doc.pageContent)
+  console.log('Source topic:', doc.metadata['topic'])
+})
+
+// Search with scores
+const scored = await store.similaritySearchWithScore('programming languages', 3)
+scored.forEach(({ document, score }) =&gt; {
+  console.log(`[${score.toFixed(3)}] ${document.pageContent}`)
+})</code></pre>
+
+<h3 id="static-factory-methods">Static Factory Methods</h3>
+
+<pre><code class="language-typescript">// From Document objects
+const store1 = await InMemoryVectorStore.fromDocuments(docs, embeddings)
+
+// From raw text strings
+const store2 = await InMemoryVectorStore.fromTexts(
+  ['First document text', 'Second document text', 'Third document text'],
+  [{ id: 1 }, { id: 2 }, { id: 3 }],
+  embeddings
+)</code></pre>
+
+<h3 id="filtered-search">Filtered Search</h3>
+
+<p>Filter results by metadata fields before ranking:</p>
+
+<pre><code class="language-typescript">// Only search documents with topic = "tech"
+const techDocs = await store.similaritySearch(
+  'typed programming',
+  3,
+  { topic: 'tech' }  // metadata filter
+)</code></pre>
+
+<h3 id="deleting-documents">Deleting Documents</h3>
+
+<p>Remove documents matching a metadata filter:</p>
+
+<pre><code class="language-typescript">// Remove all documents from topic "geography"
+await store.delete({ topic: 'geography' })
+console.log(store.size) // 3</code></pre>
+
+<hr>
+
+<h2 id="embeddings">Embeddings</h2>
+
+<p>Embeddings convert text into numerical vectors. Fireworks++ includes <code>FakeEmbeddings</code> for testing and ships <code>OpenAIEmbeddings</code> for production usage with the OpenAI embeddings API.</p>
+
+<h3 id="fakeembeddings">FakeEmbeddings</h3>
+
+<p>Deterministic, hash-based embeddings. No API key, no network. Use for development, unit tests, and exploring the API.</p>
+
+<pre><code class="language-typescript">import { FakeEmbeddings } from 'fireworks-plus-plus'
+
+const embeddings = new FakeEmbeddings(128) // 128-dimensional vectors
+
+const vector = await embeddings.embedQuery('hello world')
+console.log(vector.length)    // 128
+console.log(typeof vector[0]) // "number"
+
+// Deterministic: same text always produces the same vector
+const v1 = await embeddings.embedQuery('test')
+const v2 = await embeddings.embedQuery('test')
+console.log(v1[0] === v2[0]) // true
+
+// Embed multiple documents at once
+const vectors = await embeddings.embedDocuments(['doc one', 'doc two', 'doc three'])
+console.log(vectors.length)   // 3</code></pre>
+
+<h3 id="baseembeddings">BaseEmbeddings</h3>
+
+<p>Use <code>OpenAIEmbeddings</code> for a real hosted embedding provider:</p>
+
+<pre><code class="language-typescript">import { OpenAIEmbeddings } from 'fireworks-plus-plus'
+
+const embeddings = new OpenAIEmbeddings({
+  apiKey: process.env.OPENAI_API_KEY,
+  model: 'text-embedding-3-small'
+})
+
+// Use it exactly like FakeEmbeddings
+const store = await InMemoryVectorStore.fromDocuments(docs, embeddings)</code></pre>
+
+<h3 id="retrievers">Retrievers</h3>
+
+<p>Use <code>VectorStoreRetriever</code> when you want a reusable retrieval component instead of calling the vector store directly:</p>
+
+<pre><code class="language-typescript">import { VectorStoreRetriever } from 'fireworks-plus-plus'
+
+const retriever = new VectorStoreRetriever(store, {
+  k: 4,
+  searchType: 'similarity' // or 'mmr'
+})
+
+const docs = await retriever.getRelevantDocuments('typed programming language')</code></pre>
+
+<h3 id="static-utilities-on-baseembeddings">Static Utilities on BaseEmbeddings</h3>
+
+<pre><code class="language-typescript">import { BaseEmbeddings } from 'fireworks-plus-plus'
+
+// Cosine similarity between two vectors (range: -1 to 1)
+const similarity = BaseEmbeddings.cosineSimilarity(vectorA, vectorB)
+console.log(similarity) // e.g. 0.872
+
+// Normalize a vector to unit length
+const normalized = BaseEmbeddings.normalize([3, 4])
+console.log(normalized) // [0.6, 0.8]</code></pre>
+
+<hr>
+
+<h2 id="complete-rag-example">Complete RAG Example</h2>
+
+<pre><code class="language-typescript">import {
+  InMemoryVectorStore,
+  FakeEmbeddings,
+  TextLoader,
+  ChatAnthropic,
+  LLMChain,
+  PromptTemplate
+} from 'fireworks-plus-plus'
+import type { Document } from 'fireworks-plus-plus'
+
+// --- 1. Build the knowledge base ---
+
+const loader = new TextLoader('./knowledge-base.txt')
+const rawDocs = await loader.load()
+
+// Simple paragraph splitter
+function splitIntoParagraphs(docs: Document[]): Document[] {
+  const results: Document[] = []
+  for (const doc of docs) {
+    const paragraphs = doc.pageContent.split(/\n{2,}/).filter(p =&gt; p.trim().length &gt; 50)
+    paragraphs.forEach((para, i) =&gt; {
+      results.push({
+        pageContent: para.trim(),
+        metadata: { ...doc.metadata, paragraph: i }
+      })
+    })
+  }
+  return results
+}
+
+const chunks = splitIntoParagraphs(rawDocs)
+const store = await InMemoryVectorStore.fromDocuments(chunks, new FakeEmbeddings(256))
+console.log(`Knowledge base: ${store.size} chunks`)
+
+// --- 2. Build the QA function ---
+
+const llm = new ChatAnthropic()
+const prompt = PromptTemplate.fromTemplate(
+  `You are a helpful assistant. Use only the provided context to answer the question.
+If the context does not contain enough information, say so.
+
+Context:
+{context}
+
+Question: {question}
+
+Answer:`
+)
+const chain = new LLMChain(llm, prompt)
+
+async function answerQuestion(question: string): Promise&lt;{ answer: string; sources: string[] }&gt; {
+  const relevant = await store.similaritySearchWithScore(question, 4)
+
+  // Filter to reasonably relevant chunks only (score &gt; 0.3)
+  const filtered = relevant.filter(r =&gt; r.score &gt; 0.3)
+
+  if (filtered.length === 0) {
+    return {
+      answer: 'No relevant information found in the knowledge base.',
+      sources: []
+    }
+  }
+
+  const context = filtered.map(r =&gt; r.document.pageContent).join('\n\n---\n\n')
+  const sources = [...new Set(filtered.map(r =&gt; String(r.document.metadata['source'] ?? '')))]
+
+  const answer = await chain.run({ context, question })
+
+  return { answer, sources }
+}
+
+// --- 3. Use it ---
+
+const { answer, sources } = await answerQuestion('How do I configure authentication?')
+console.log('Answer:', answer)
+console.log('Sources:', sources)</code></pre>
+
+  </main>
+</body>
+</html>

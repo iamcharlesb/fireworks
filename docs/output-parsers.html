@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Output Parsers — Fireworks++</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f9fafb;
+      --surface: #ffffff;
+      --border: #e2e6ef;
+      --accent: #e05a1a;
+      --accent2: #c04a0e;
+      --text: #1a1d2e;
+      --muted: #6b7280;
+      --code-bg: #f3f4f6;
+      --link: #2563eb;
+      --nav-w: 260px;
+    }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    nav {
+      width: var(--nav-w);
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 0;
+      position: fixed;
+      top: 0; left: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-brand {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-brand .logo {
+      font-size: 22px;
+    }
+    .nav-brand h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .nav-brand span {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 12px 0;
+    }
+    nav ul li a {
+      display: block;
+      padding: 7px 24px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.15s, background 0.15s;
+      border-left: 3px solid transparent;
+    }
+    nav ul li a:hover {
+      color: var(--text);
+      background: rgba(255,107,43,0.06);
+    }
+    nav ul li.active a {
+      color: var(--accent2);
+      border-left-color: var(--accent);
+      background: rgba(255,107,43,0.08);
+      font-weight: 600;
+    }
+
+    /* ── Main content ── */
+    main {
+      margin-left: var(--nav-w);
+      flex: 1;
+      max-width: 860px;
+      padding: 52px 60px;
+    }
+
+    h1 { font-size: 2rem; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.5px; }
+    h2 { font-size: 1.4rem; font-weight: 700; margin: 40px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.1rem; font-weight: 600; margin: 28px 0 10px; }
+    h4 { font-size: 1rem; font-weight: 600; margin: 20px 0 8px; color: var(--accent2); }
+    h5, h6 { font-size: 0.95rem; font-weight: 600; margin: 16px 0 6px; color: var(--muted); }
+
+    p { margin: 12px 0; color: var(--text); }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    code {
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 0.85em;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #c2410c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      overflow-x: auto;
+      margin: 18px 0;
+      position: relative;
+    }
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: #374151;
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 0.88em;
+      line-height: 1.6;
+    }
+
+    /* Syntax-ish colour hints */
+    pre code .kw { color: #c678dd; }
+    pre code .st { color: #98c379; }
+    pre code .cm { color: #5c6370; font-style: italic; }
+
+    blockquote {
+      border-left: 4px solid var(--accent);
+      background: rgba(255,107,43,0.06);
+      padding: 14px 20px;
+      border-radius: 0 6px 6px 0;
+      margin: 16px 0;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    ul, ol {
+      padding-left: 24px;
+      margin: 12px 0;
+    }
+    li { margin: 5px 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.9rem;
+    }
+    th {
+      background: var(--surface);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      color: var(--accent2);
+    }
+    td {
+      padding: 9px 14px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+
+    strong { color: #111; font-weight: 700; }
+    em { color: var(--accent2); font-style: italic; }
+    del { color: var(--muted); }
+
+    /* ── Badge pills on homepage ── */
+    .badge {
+      display: inline-block;
+      background: rgba(255,107,43,0.15);
+      color: var(--accent2);
+      border: 1px solid rgba(255,107,43,0.3);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    @media (max-width: 768px) {
+      nav { display: none; }
+      main { margin-left: 0; padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-brand">
+      <span class="logo">🔥</span>
+      <div>
+        <h1>Fireworks++</h1>
+        <span>v0.1.0</span>
+      </div>
+    </div>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="concepts.html">Concepts</a></li>
+<li><a href="llms.html">LLMs</a></li>
+<li><a href="chains.html">Chains</a></li>
+<li><a href="agents.html">Agents</a></li>
+<li><a href="tools.html">Tools</a></li>
+<li><a href="memory.html">Memory</a></li>
+<li><a href="prompts.html">Prompts</a></li>
+<li class="active"><a href="output-parsers.html">Output Parsers</a></li>
+<li><a href="document-loaders.html">Document Loaders</a></li>
+<li><a href="vector-stores.html">Vector Stores</a></li>
+<li><a href="callbacks.html">Callbacks</a></li>
+<li><a href="cli.html">CLI</a></li>
+<li><a href="checkpoints.html">Checkpoints</a></li>
+<li><a href="evaluations.html">Evaluations</a></li>
+<li><a href="simple-api.html">Simple API</a></li>
+<li><a href="mcp.html">MCP</a></li>
+<li><a href="auth.html">Auth</a></li>
+<li><a href="governance.html">Governance</a></li>
+<li><a href="plugins.html">Plugins</a></li>
+<li><a href="integrations.html">Integrations</a></li>
+<li><a href="monitoring.html">Monitoring</a></li>
+<li><a href="server.html">Server</a></li>
+<li><a href="python-sdk.html">Python SDK</a></li>
+<li><a href="workflows.html">Workflows</a></li>
+<li><a href="routing.html">Routing</a></li>
+<li><a href="safety.html">Safety</a></li>
+<li><a href="api-reference.html">API Reference</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h1 id="output-parsers">Output Parsers</h1>
+
+<p>Output parsers transform the raw text that an LLM produces into typed TypeScript values. Every parser also provides <code>getFormatInstructions()</code> — a string you can embed in your prompt so the LLM knows exactly what format to use.</p>
+
+<h2 id="baseoutputparser">BaseOutputParser</h2>
+
+<pre><code class="language-typescript">abstract class BaseOutputParser&lt;T = string&gt; {
+  abstract parse(output: string): T
+  abstract _type(): string
+
+  // Instructions to embed in your prompt
+  getFormatInstructions(): string
+
+  // parse() with contextual error reporting
+  parseWithPrompt(output: string, prompt: string): T
+}</code></pre>
+
+<hr>
+
+<h2 id="jsonoutputparser">JsonOutputParser</h2>
+
+<p>Extracts and parses a JSON object or array from LLM output. Handles:</p>
+<ul><li>Raw JSON: <code>{"key": "value"}</code></li><li>Markdown fences: `<code> </code>`<code>json\n{"key": "value"}\n</code>`<code> </code>`</li><li>JSON embedded in surrounding prose</li></ul>
+
+<pre><code class="language-typescript">import { JsonOutputParser } from 'fireworks-plus-plus'
+
+const parser = new JsonOutputParser()
+
+// Raw JSON
+parser.parse('{"name": "Alice", "age": 30}')
+// =&gt; { name: "Alice", age: 30 }
+
+// Markdown-fenced
+parser.parse('```json\n{"score": 42}\n```')
+// =&gt; { score: 42 }
+
+// Embedded in prose
+parser.parse('Sure! Here is the data: {"result": "success", "count": 7}. Hope that helps!')
+// =&gt; { result: "success", count: 7 }
+
+// Arrays
+parser.parse('[1, 2, 3]')
+// =&gt; [1, 2, 3]
+
+// Format instructions for prompts
+console.log(parser.getFormatInstructions())
+// "Respond with a valid JSON object."</code></pre>
+
+<h3 id="using-with-llmchain">Using with LLMChain</h3>
+
+<pre><code class="language-typescript">import { ChatAnthropic, LLMChain, PromptTemplate, JsonOutputParser } from 'fireworks-plus-plus'
+
+const parser = new JsonOutputParser()
+const prompt = PromptTemplate.fromTemplate(
+  `Return JSON about this country: {country}
+Fields: name, capital, population, continent.
+
+${parser.getFormatInstructions()}`
+)
+
+const chain = new LLMChain(new ChatAnthropic(), prompt, { outputParser: parser })
+const result = await chain.run('Japan')
+console.log(result.capital)    // "Tokyo"
+console.log(result.continent)  // "Asia"</code></pre>
+
+<h3 id="parseerror">ParseError</h3>
+
+<p>When parsing fails, <code>JsonOutputParser</code> throws a <code>ParseError</code> with the original output attached:</p>
+
+<pre><code class="language-typescript">import { ParseError } from 'fireworks-plus-plus'
+
+try {
+  parser.parse('This is not JSON at all.')
+} catch (e) {
+  if (e instanceof ParseError) {
+    console.error('Failed to parse:', e.message)
+    console.error('Original output:', e.output)
+  }
+}</code></pre>
+
+<hr>
+
+<h2 id="structuredoutputparser">StructuredOutputParser</h2>
+
+<p>Parses named fields from LLM output. Tries JSON first, then falls back to <code>key: value</code> line extraction. Fields can be typed and marked required.</p>
+
+<pre><code class="language-typescript">import { StructuredOutputParser } from 'fireworks-plus-plus'
+
+// Create from field descriptions (all fields treated as strings)
+const parser = StructuredOutputParser.fromNamesAndDescriptions({
+  title: 'The title of the article',
+  summary: 'A one-paragraph summary of the article',
+  sentiment: 'The overall sentiment: Positive, Negative, or Neutral',
+  score: 'A relevance score between 0 and 10'
+})
+
+// Parses JSON format
+parser.parse('{"title":"AI Advances","summary":"Researchers...","sentiment":"Positive","score":"9"}')
+// =&gt; { title: "AI Advances", summary: "Researchers...", sentiment: "Positive", score: "9" }
+
+// Also parses key:value format
+parser.parse('title: AI Advances\nsummary: Researchers...\nsentiment: Positive\nscore: 9')
+// =&gt; { title: "AI Advances", summary: "Researchers...", sentiment: "Positive", score: "9" }</code></pre>
+
+<h3 id="full-schema-definition">Full Schema Definition</h3>
+
+<p>For type coercion on specific fields:</p>
+
+<pre><code class="language-typescript">import { StructuredOutputParser } from 'fireworks-plus-plus'
+import type { OutputSchema } from 'fireworks-plus-plus'
+
+const schema: OutputSchema = {
+  name: { type: 'string', description: 'Full name', required: true },
+  age: { type: 'number', description: 'Age in years', required: true },
+  active: { type: 'boolean', description: 'Is this person active?', required: false },
+  tags: { type: 'array', description: 'List of relevant tags', required: false }
+}
+
+const parser = new StructuredOutputParser(schema)
+
+const result = parser.parse('{"name":"Bob","age":"35","active":"true","tags":["dev","ts"]}')
+// age is coerced to number: 35
+// active is coerced to boolean: true
+console.log(typeof result.age)    // "number"
+console.log(typeof result.active) // "boolean"</code></pre>
+
+<h3 id="format-instructions">Format Instructions</h3>
+
+<pre><code class="language-typescript">console.log(parser.getFormatInstructions())
+// "You must respond with a JSON object containing the following fields:
+//  - name (string) (required): Full name
+//  - age (number) (required): Age in years
+//  - active (boolean) (optional): Is this person active?
+//  - tags (array) (optional): List of relevant tags
+//
+//  Format your response as a valid JSON object. Example:
+//  {
+//    "name": &lt;value&gt;,
+//    "age": &lt;value&gt;,
+//    ...
+//  }"</code></pre>
+
+<h3 id="using-with-llmchain">Using with LLMChain</h3>
+
+<pre><code class="language-typescript">import { StructuredOutputParser, LLMChain, PromptTemplate, ChatAnthropic } from 'fireworks-plus-plus'
+
+const parser = StructuredOutputParser.fromNamesAndDescriptions({
+  pros: 'Three pros, comma-separated',
+  cons: 'Three cons, comma-separated',
+  verdict: 'One-sentence overall verdict'
+})
+
+const prompt = PromptTemplate.fromTemplate(
+  `Analyse the pros and cons of: {subject}
+
+${parser.getFormatInstructions()}`
+)
+
+const chain = new LLMChain(new ChatAnthropic(), prompt, { outputParser: parser })
+const result = await chain.run('working from home')
+console.log(result.pros)
+console.log(result.verdict)</code></pre>
+
+<hr>
+
+<h2 id="commaseparatedlistoutputparser">CommaSeparatedListOutputParser</h2>
+
+<p>Parses a comma-separated list into a string array.</p>
+
+<pre><code class="language-typescript">import { CommaSeparatedListOutputParser } from 'fireworks-plus-plus'
+
+const parser = new CommaSeparatedListOutputParser()
+
+parser.parse('apples, bananas, cherries')
+// =&gt; ["apples", "bananas", "cherries"]
+
+parser.parse('  TypeScript , JavaScript,  Python  ')
+// =&gt; ["TypeScript", "JavaScript", "Python"]
+
+console.log(parser.getFormatInstructions())
+// "Your response should be a list of comma separated values, eg: foo, bar, baz"</code></pre>
+
+<hr>
+
+<h2 id="numberedlistoutputparser">NumberedListOutputParser</h2>
+
+<p>Parses a numbered list (with <code>1.</code> or <code>1)</code> prefix) into a string array.</p>
+
+<pre><code class="language-typescript">import { NumberedListOutputParser } from 'fireworks-plus-plus'
+
+const parser = new NumberedListOutputParser()
+
+parser.parse('1. Install Node.js\n2. Run npm install\n3. Start the server')
+// =&gt; ["Install Node.js", "Run npm install", "Start the server"]
+
+parser.parse('1) First item\n2) Second item\n3) Third item')
+// =&gt; ["First item", "Second item", "Third item"]
+
+console.log(parser.getFormatInstructions())
+// "Your response should be a numbered list of items, eg:\n1. item one\n2. item two"</code></pre>
+
+<hr>
+
+<h2 id="lineoutputparser">LineOutputParser</h2>
+
+<p>Parses newline-separated text into a string array, one item per line.</p>
+
+<pre><code class="language-typescript">import { LineOutputParser } from 'fireworks-plus-plus'
+
+const parser = new LineOutputParser()
+
+parser.parse('First line\nSecond line\nThird line')
+// =&gt; ["First line", "Second line", "Third line"]
+
+// Empty lines are filtered out
+parser.parse('Line 1\n\nLine 2\n  \nLine 3')
+// =&gt; ["Line 1", "Line 2", "Line 3"]</code></pre>
+
+<hr>
+
+<h2 id="using-parsers-without-a-chain">Using Parsers Without a Chain</h2>
+
+<p>You can use output parsers independently of chains:</p>
+
+<pre><code class="language-typescript">import { ChatAnthropic, JsonOutputParser } from 'fireworks-plus-plus'
+
+const llm = new ChatAnthropic()
+const parser = new JsonOutputParser()
+
+const reply = await llm.call([{
+  role: 'human',
+  content: `Return a JSON object with fields "word" and "definition" for: serendipity.
+${parser.getFormatInstructions()}`
+}])
+
+const parsed = parser.parse(reply.content)
+console.log(parsed.word)       // "serendipity"
+console.log(parsed.definition) // "..."</code></pre>
+
+<hr>
+
+<h2 id="error-handling">Error Handling</h2>
+
+<p>All parsers throw a <code>ParseError</code> on failure. Use <code>parseWithPrompt()</code> for better debugging output:</p>
+
+<pre><code class="language-typescript">import { StructuredOutputParser, ParseError } from 'fireworks-plus-plus'
+
+const parser = StructuredOutputParser.fromNamesAndDescriptions({
+  answer: 'The answer',
+  confidence: 'Confidence level 0-100'
+})
+
+const rawOutput = 'I am not sure about this.'
+const prompt = 'Answer the question with JSON...'
+
+try {
+  const result = parser.parseWithPrompt(rawOutput, prompt)
+} catch (e) {
+  if (e instanceof ParseError) {
+    console.error(e.message)
+    // Includes both the prompt and the raw output for debugging
+  }
+}</code></pre>
+
+  </main>
+</body>
+</html>

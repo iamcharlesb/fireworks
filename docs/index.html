@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fireworks++ — Fireworks++</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f9fafb;
+      --surface: #ffffff;
+      --border: #e2e6ef;
+      --accent: #e05a1a;
+      --accent2: #c04a0e;
+      --text: #1a1d2e;
+      --muted: #6b7280;
+      --code-bg: #f3f4f6;
+      --link: #2563eb;
+      --nav-w: 260px;
+    }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    nav {
+      width: var(--nav-w);
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 0;
+      position: fixed;
+      top: 0; left: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-brand {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-brand .logo {
+      font-size: 22px;
+    }
+    .nav-brand h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .nav-brand span {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 12px 0;
+    }
+    nav ul li a {
+      display: block;
+      padding: 7px 24px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.15s, background 0.15s;
+      border-left: 3px solid transparent;
+    }
+    nav ul li a:hover {
+      color: var(--text);
+      background: rgba(255,107,43,0.06);
+    }
+    nav ul li.active a {
+      color: var(--accent2);
+      border-left-color: var(--accent);
+      background: rgba(255,107,43,0.08);
+      font-weight: 600;
+    }
+
+    /* ── Main content ── */
+    main {
+      margin-left: var(--nav-w);
+      flex: 1;
+      max-width: 860px;
+      padding: 52px 60px;
+    }
+
+    h1 { font-size: 2rem; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.5px; }
+    h2 { font-size: 1.4rem; font-weight: 700; margin: 40px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.1rem; font-weight: 600; margin: 28px 0 10px; }
+    h4 { font-size: 1rem; font-weight: 600; margin: 20px 0 8px; color: var(--accent2); }
+    h5, h6 { font-size: 0.95rem; font-weight: 600; margin: 16px 0 6px; color: var(--muted); }
+
+    p { margin: 12px 0; color: var(--text); }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    code {
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 0.85em;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #c2410c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      overflow-x: auto;
+      margin: 18px 0;
+      position: relative;
+    }
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: #374151;
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 0.88em;
+      line-height: 1.6;
+    }
+
+    /* Syntax-ish colour hints */
+    pre code .kw { color: #c678dd; }
+    pre code .st { color: #98c379; }
+    pre code .cm { color: #5c6370; font-style: italic; }
+
+    blockquote {
+      border-left: 4px solid var(--accent);
+      background: rgba(255,107,43,0.06);
+      padding: 14px 20px;
+      border-radius: 0 6px 6px 0;
+      margin: 16px 0;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    ul, ol {
+      padding-left: 24px;
+      margin: 12px 0;
+    }
+    li { margin: 5px 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.9rem;
+    }
+    th {
+      background: var(--surface);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      color: var(--accent2);
+    }
+    td {
+      padding: 9px 14px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+
+    strong { color: #111; font-weight: 700; }
+    em { color: var(--accent2); font-style: italic; }
+    del { color: var(--muted); }
+
+    /* ── Badge pills on homepage ── */
+    .badge {
+      display: inline-block;
+      background: rgba(255,107,43,0.15);
+      color: var(--accent2);
+      border: 1px solid rgba(255,107,43,0.3);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    @media (max-width: 768px) {
+      nav { display: none; }
+      main { margin-left: 0; padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-brand">
+      <span class="logo">🔥</span>
+      <div>
+        <h1>Fireworks++</h1>
+        <span>v0.1.0</span>
+      </div>
+    </div>
+    <ul>
+      <li class="active"><a href="index.html">Home</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="concepts.html">Concepts</a></li>
+<li><a href="llms.html">LLMs</a></li>
+<li><a href="chains.html">Chains</a></li>
+<li><a href="agents.html">Agents</a></li>
+<li><a href="tools.html">Tools</a></li>
+<li><a href="memory.html">Memory</a></li>
+<li><a href="prompts.html">Prompts</a></li>
+<li><a href="output-parsers.html">Output Parsers</a></li>
+<li><a href="document-loaders.html">Document Loaders</a></li>
+<li><a href="vector-stores.html">Vector Stores</a></li>
+<li><a href="callbacks.html">Callbacks</a></li>
+<li><a href="cli.html">CLI</a></li>
+<li><a href="checkpoints.html">Checkpoints</a></li>
+<li><a href="evaluations.html">Evaluations</a></li>
+<li><a href="simple-api.html">Simple API</a></li>
+<li><a href="mcp.html">MCP</a></li>
+<li><a href="auth.html">Auth</a></li>
+<li><a href="governance.html">Governance</a></li>
+<li><a href="plugins.html">Plugins</a></li>
+<li><a href="integrations.html">Integrations</a></li>
+<li><a href="monitoring.html">Monitoring</a></li>
+<li><a href="server.html">Server</a></li>
+<li><a href="python-sdk.html">Python SDK</a></li>
+<li><a href="workflows.html">Workflows</a></li>
+<li><a href="routing.html">Routing</a></li>
+<li><a href="safety.html">Safety</a></li>
+<li><a href="api-reference.html">API Reference</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h1 id="fireworks">Fireworks++</h1>
+
+<blockquote>A TypeScript-first agentic AI framework — Build LLM-powered applications with composable chains, agents, tools, and memory.</blockquote>
+
+<h2 id="what-is-fireworks">What is Fireworks++?</h2>
+
+<p>Fireworks++ is an open-source TypeScript framework for building applications powered by large language models (LLMs). It provides a clean, composable architecture for creating everything from simple chatbots to complex autonomous agents that interact with the real world.</p>
+
+<ul><li><strong>Provider Abstraction</strong> — Unified API for Anthropic, OpenAI, Gemini, Perplexity, and Ollama</li><li><strong>Gemini Support</strong> — Native Google Gemini chat and text wrappers with tool calling and structured output</li><li><strong>Native Tool Calling</strong> — Provider-native tool/function calling for OpenAI and Anthropic chat models</li><li><strong>Native Tool Agents</strong> — Tool-calling agent loop built on provider-native tool use</li><li><strong>Structured Output</strong> — JSON-schema structured output helpers for OpenAI and Anthropic</li><li><strong>Tracing and Costing</strong> — In-memory traces and approximate token/cost accounting</li><li><strong>Evaluations</strong> — Lightweight dataset runners with built-in exact-match and contains evaluators</li><li><strong>Checkpointing</strong> — Resume tool-calling agent runs from in-memory or file-backed state</li><li><strong>Human Approval</strong> — Pause risky tool calls, approve or reject them, and resume from checkpoints</li><li><strong>CLI</strong> — Scaffold projects, inspect audit logs, and summarize checkpoints/workflows locally</li><li><strong>Governance Controls</strong> — RBAC, policies, budgets, and audit logging for agents and workflows</li><li><strong>Monitoring Dashboard</strong> — Generate local dashboards and alert summaries from runtime artifacts</li><li><strong>Management Server</strong> — Self-hosted HTTP server for dashboards, alerts, and operational APIs</li><li><strong>Plugins and Connectors</strong> — Extensible plugin registry plus webhook, Datadog, Splunk, Kafka, and REST connectors</li><li><strong>Simple Facade</strong> — <code>createAgent()</code> API for fast adoption with a clean upgrade path to the advanced runtime</li><li><strong>MCP Support</strong> — First-class MCP client and server support for tools, resources, and prompts</li><li><strong>Workflow Graphs</strong> — Conditional graph execution with branching state and resumable workflow checkpoints</li><li><strong>Composable Chains</strong> — LLMChain, SequentialChain, RouterChain, TransformChain</li><li><strong>Intelligent Agents</strong> — ReAct agents with tool use and multi-step planning</li><li><strong>Built-in Tools</strong> — SSH, Browser, Research, Document generation, Editor, Calculator</li><li><strong>Memory Systems</strong> — Buffer, Window, Summary, and Thread-based conversation memory</li><li><strong>Intent Routing</strong> — Heuristic and LLM-based request routing</li><li><strong>Safety Policies</strong> — Content filtering before execution</li><li><strong>Output Parsers</strong> — JSON, Structured, and List parsers</li><li><strong>Document Loaders</strong> — Text, JSON, and CSV loading with split support</li><li><strong>Retrievers</strong> — Vector-store retrievers for reusable RAG pipelines</li><li><strong>Vector Stores</strong> — In-memory semantic search with cosine similarity</li><li><strong>Streaming</strong> — Token-level streaming with callback handlers</li><li><strong>Full TypeScript</strong> — Strict typing throughout, excellent IDE support</li></ul>
+
+<h2 id="installation">Installation</h2>
+
+<pre><code class="language-bash">npm install fireworks-plus-plus
+# or
+yarn add fireworks-plus-plus</code></pre>
+
+<p>No required runtime dependencies. API keys are passed via config or environment variables.</p>
+
+<h2 id="quick-start">Quick Start</h2>
+
+<h3 id="basic-chat">Basic Chat</h3>
+
+<pre><code class="language-typescript">import { ChatAnthropic } from 'fireworks-plus-plus'
+
+const llm = new ChatAnthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+  model: 'claude-3-5-sonnet-20241022'
+})
+
+const reply = await llm.call([
+  { role: 'human', content: 'What is the capital of France?' }
+])
+console.log(reply.content) // "The capital of France is Paris."</code></pre>
+
+<h3 id="llm-chain">LLM Chain</h3>
+
+<pre><code class="language-typescript">import { ChatAnthropic, LLMChain, PromptTemplate } from 'fireworks-plus-plus'
+
+const llm = new ChatAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const prompt = PromptTemplate.fromTemplate('Tell me a {adjective} joke about {topic}')
+const chain = new LLMChain(llm, prompt)
+
+const result = await chain.run({ adjective: 'funny', topic: 'programmers' })
+console.log(result)</code></pre>
+
+<h3 id="conversation-with-memory">Conversation with Memory</h3>
+
+<pre><code class="language-typescript">import { ChatAnthropic, ConversationBufferMemory } from 'fireworks-plus-plus'
+
+const llm = new ChatAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const memory = new ConversationBufferMemory()
+
+async function chat(userInput: string): Promise&lt;string&gt; {
+  const vars = await memory.loadMemoryVariables()
+  const history = vars['history'] as string
+
+  const messages = []
+  if (history) {
+    messages.push({ role: 'system' as const, content: `Conversation so far:\n${history}` })
+  }
+  messages.push({ role: 'human' as const, content: userInput })
+
+  const reply = await llm.call(messages)
+  await memory.saveContext({ input: userInput }, { output: reply.content })
+  return reply.content
+}
+
+await chat('My name is Alice.')
+const response = await chat('What is my name?')
+console.log(response) // "Your name is Alice."</code></pre>
+
+<h3 id="semantic-search-rag">Semantic Search (RAG)</h3>
+
+<pre><code class="language-typescript">import {
+  InMemoryVectorStore,
+  FakeEmbeddings,
+  TextLoader,
+  VectorStoreRetriever
+} from 'fireworks-plus-plus'
+
+const loader = new TextLoader('./my-document.txt')
+const docs = await loader.load()
+
+const store = await InMemoryVectorStore.fromDocuments(docs, new FakeEmbeddings())
+const retriever = new VectorStoreRetriever(store, { k: 3 })
+const results = await retriever.getRelevantDocuments('key concepts')
+results.forEach(r =&gt; console.log(r.pageContent))</code></pre>
+
+<h3 id="streaming">Streaming</h3>
+
+<pre><code class="language-typescript">import { ChatAnthropic } from 'fireworks-plus-plus'
+
+const llm = new ChatAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+
+await llm.stream(
+  [{ role: 'human', content: 'Write a haiku about TypeScript.' }],
+  (chunk) =&gt; {
+    if (!chunk.isFinal) process.stdout.write(chunk.text)
+  }
+)</code></pre>
+
+<h3 id="intent-routing">Intent Routing</h3>
+
+<pre><code class="language-typescript">import { IntentRouter, HeuristicRouter } from 'fireworks-plus-plus'
+
+const router = new IntentRouter()
+const decision = await router.route('Calculate 42 * 7 + 100')
+console.log(decision.kind)       // "calculator"
+console.log(decision.confidence) // 0.92</code></pre>
+
+<h3 id="safety-policy">Safety Policy</h3>
+
+<pre><code class="language-typescript">import { SafetyPolicy } from 'fireworks-plus-plus'
+
+const policy = new SafetyPolicy()
+const result = policy.check(userInput)
+if (!result.allowed) {
+  console.error('Blocked:', result.reason)
+}</code></pre>
+
+<h2 id="modules">Modules</h2>
+
+<pre><code class="language-text">Fireworks++
+├── schema/          Core types and interfaces
+├── llms/            Text completion: Anthropic, OpenAI, Gemini, Perplexity, Ollama
+├── chat_models/     Chat models: ChatAnthropic, ChatOpenAI, ChatGemini, ChatPerplexity, ChatOllama
+├── prompts/         PromptTemplate, ChatPromptTemplate, FewShotPromptTemplate
+├── chains/          LLMChain, SequentialChain, RouterChain, TransformChain
+├── tools/           ResearchTool, CalculatorTool, BrowserTool, SSHTool, DocumentTool, EditorTool
+├── memory/          Buffer, Window, Summary, ThreadedMemory
+├── output_parsers/  JsonOutputParser, StructuredOutputParser, list parsers
+├── document_loaders/ TextLoader, BaseDocumentLoader
+├── embeddings/      BaseEmbeddings, FakeEmbeddings, OpenAIEmbeddings
+├── retrievers/      BaseRetriever, VectorStoreRetriever
+├── vectorstores/    InMemoryVectorStore
+├── callbacks/       Logging, Streaming, Tracing, CostTracking handlers
+├── evaluations/     Dataset runners and built-in evaluators
+├── checkpoints/     In-memory and file-backed runtime checkpoints
+├── governance/      RBAC, policies, budgets, and audit logging
+├── auth/            Bearer auth and SAML-style attribute mapping
+├── plugins/         Plugin registry for tools, loaders, workflow nodes, callbacks
+├── integrations/    Webhook, Datadog, Splunk, Kafka, and REST connectors
+├── mcp/             Model Context Protocol client/server support
+├── monitoring/      Snapshot loading, alert rules, and static dashboard rendering
+├── simple/          High-level createAgent facade
+├── server/          Self-hosted management API server
+├── workflows/       Workflow graphs, branching state, and workflow executors
+├── routing/         HeuristicRouter, IntentRouter
+└── safety/          SafetyPolicy</code></pre>
+
+<h2 id="documentation">Documentation</h2>
+
+<ul><li><a href="./docs/getting-started.md">Getting Started</a></li><li><a href="./docs/concepts.md">Core Concepts</a></li><li><a href="./docs/llms.md">LLMs and Chat Models</a></li><li><a href="./docs/chains.md">Chains</a></li><li><a href="./docs/agents.md">Agents and Tools</a></li><li><a href="./docs/tools.md">Tools Reference</a></li><li><a href="./docs/memory.md">Memory</a></li><li><a href="./docs/output-parsers.md">Output Parsers</a></li><li><a href="./docs/document-loaders.md">Document Loaders and Text Splitters</a></li><li><a href="./docs/vector-stores.md">Vector Stores</a></li><li><a href="./docs/callbacks.md">Callbacks</a></li><li><a href="./docs/cli.md">CLI</a></li><li><a href="./docs/checkpoints.md">Checkpoints</a></li><li><a href="./docs/evaluations.md">Evaluations</a></li><li><a href="./docs/governance.md">Governance</a></li><li><a href="./docs/simple-api.md">Simple API</a></li><li><a href="./docs/mcp.md">MCP</a></li><li><a href="./docs/auth.md">Auth</a></li><li><a href="./docs/plugins.md">Plugins</a></li><li><a href="./docs/integrations.md">Integrations</a></li><li><a href="./docs/monitoring.md">Monitoring</a></li><li><a href="./docs/server.md">Management Server</a></li><li><a href="./docs/python-sdk.md">Python SDK</a></li><li><a href="./docs/workflows.md">Workflows</a></li><li><a href="./docs/routing.md">Intent Routing</a></li><li><a href="./docs/safety.md">Safety</a></li><li><a href="./docs/api-reference.md">API Reference</a></li></ul>
+
+<h2 id="examples">Examples</h2>
+
+<p>See the <a href="./examples/">examples/</a> directory for runnable TypeScript examples.</p>
+
+<pre><code class="language-bash">export ANTHROPIC_API_KEY=your-key
+npx ts-node examples/01-basic-llm.ts
+npx ts-node examples/17-governance-controls.ts
+npx ts-node examples/18-monitoring-dashboard.ts
+npx ts-node examples/19-plugins-and-connectors.ts
+npx ts-node examples/20-management-server.ts
+npx ts-node examples/21-simple-create-agent.ts
+npx ts-node examples/22-mcp-client-server.ts</code></pre>
+
+<h2 id="requirements">Requirements</h2>
+
+<ul><li>Node.js >= 18.0.0</li><li>TypeScript >= 5.0</li></ul>
+
+<h2 id="license">License</h2>
+
+<p>Apache 2.0 — see <a href="./LICENSE">LICENSE</a></p>
+
+  </main>
+</body>
+</html>

@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Reference — Fireworks++</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f9fafb;
+      --surface: #ffffff;
+      --border: #e2e6ef;
+      --accent: #e05a1a;
+      --accent2: #c04a0e;
+      --text: #1a1d2e;
+      --muted: #6b7280;
+      --code-bg: #f3f4f6;
+      --link: #2563eb;
+      --nav-w: 260px;
+    }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    nav {
+      width: var(--nav-w);
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 0;
+      position: fixed;
+      top: 0; left: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-brand {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-brand .logo {
+      font-size: 22px;
+    }
+    .nav-brand h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .nav-brand span {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 12px 0;
+    }
+    nav ul li a {
+      display: block;
+      padding: 7px 24px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.15s, background 0.15s;
+      border-left: 3px solid transparent;
+    }
+    nav ul li a:hover {
+      color: var(--text);
+      background: rgba(255,107,43,0.06);
+    }
+    nav ul li.active a {
+      color: var(--accent2);
+      border-left-color: var(--accent);
+      background: rgba(255,107,43,0.08);
+      font-weight: 600;
+    }
+
+    /* ── Main content ── */
+    main {
+      margin-left: var(--nav-w);
+      flex: 1;
+      max-width: 860px;
+      padding: 52px 60px;
+    }
+
+    h1 { font-size: 2rem; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.5px; }
+    h2 { font-size: 1.4rem; font-weight: 700; margin: 40px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.1rem; font-weight: 600; margin: 28px 0 10px; }
+    h4 { font-size: 1rem; font-weight: 600; margin: 20px 0 8px; color: var(--accent2); }
+    h5, h6 { font-size: 0.95rem; font-weight: 600; margin: 16px 0 6px; color: var(--muted); }
+
+    p { margin: 12px 0; color: var(--text); }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    code {
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 0.85em;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #c2410c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      overflow-x: auto;
+      margin: 18px 0;
+      position: relative;
+    }
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: #374151;
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 0.88em;
+      line-height: 1.6;
+    }
+
+    /* Syntax-ish colour hints */
+    pre code .kw { color: #c678dd; }
+    pre code .st { color: #98c379; }
+    pre code .cm { color: #5c6370; font-style: italic; }
+
+    blockquote {
+      border-left: 4px solid var(--accent);
+      background: rgba(255,107,43,0.06);
+      padding: 14px 20px;
+      border-radius: 0 6px 6px 0;
+      margin: 16px 0;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    ul, ol {
+      padding-left: 24px;
+      margin: 12px 0;
+    }
+    li { margin: 5px 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.9rem;
+    }
+    th {
+      background: var(--surface);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      color: var(--accent2);
+    }
+    td {
+      padding: 9px 14px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+
+    strong { color: #111; font-weight: 700; }
+    em { color: var(--accent2); font-style: italic; }
+    del { color: var(--muted); }
+
+    /* ── Badge pills on homepage ── */
+    .badge {
+      display: inline-block;
+      background: rgba(255,107,43,0.15);
+      color: var(--accent2);
+      border: 1px solid rgba(255,107,43,0.3);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    @media (max-width: 768px) {
+      nav { display: none; }
+      main { margin-left: 0; padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-brand">
+      <span class="logo">🔥</span>
+      <div>
+        <h1>Fireworks++</h1>
+        <span>v0.1.0</span>
+      </div>
+    </div>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="concepts.html">Concepts</a></li>
+<li><a href="llms.html">LLMs</a></li>
+<li><a href="chains.html">Chains</a></li>
+<li><a href="agents.html">Agents</a></li>
+<li><a href="tools.html">Tools</a></li>
+<li><a href="memory.html">Memory</a></li>
+<li><a href="prompts.html">Prompts</a></li>
+<li><a href="output-parsers.html">Output Parsers</a></li>
+<li><a href="document-loaders.html">Document Loaders</a></li>
+<li><a href="vector-stores.html">Vector Stores</a></li>
+<li><a href="callbacks.html">Callbacks</a></li>
+<li><a href="cli.html">CLI</a></li>
+<li><a href="checkpoints.html">Checkpoints</a></li>
+<li><a href="evaluations.html">Evaluations</a></li>
+<li><a href="simple-api.html">Simple API</a></li>
+<li><a href="mcp.html">MCP</a></li>
+<li><a href="auth.html">Auth</a></li>
+<li><a href="governance.html">Governance</a></li>
+<li><a href="plugins.html">Plugins</a></li>
+<li><a href="integrations.html">Integrations</a></li>
+<li><a href="monitoring.html">Monitoring</a></li>
+<li><a href="server.html">Server</a></li>
+<li><a href="python-sdk.html">Python SDK</a></li>
+<li><a href="workflows.html">Workflows</a></li>
+<li><a href="routing.html">Routing</a></li>
+<li><a href="safety.html">Safety</a></li>
+<li class="active"><a href="api-reference.html">API Reference</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h1 id="api-reference">API Reference</h1>
+
+<p>Complete reference for all public classes and methods in Fireworks++.</p>
+
+<hr>
+
+<h2 id="chat-models">Chat Models</h2>
+
+<h3 id="chatanthropic">ChatAnthropic</h3>
+
+<pre><code class="language-typescript">import { ChatAnthropic } from 'fireworks-plus-plus'
+new ChatAnthropic(config?: ChatAnthropicConfig)</code></pre>
+
+<p><strong>Config (<code>ChatAnthropicConfig</code>):</strong></p>
+
+<table><thead><tr><th>Property</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>apiKey</code></td><td><code>string</code></td><td><code>ANTHROPIC_API_KEY</code> env</td><td>Anthropic API key</td></tr>
+<tr><td><code>model</code></td><td><code>string</code></td><td><code>"claude-3-5-sonnet-20241022"</code></td><td>Model name</td></tr>
+<tr><td><code>temperature</code></td><td><code>number</code></td><td><code>0.7</code></td><td>Sampling temperature (0–1)</td></tr>
+<tr><td><code>maxTokens</code></td><td><code>number</code></td><td><code>2048</code></td><td>Max tokens to generate</td></tr>
+<tr><td><code>topP</code></td><td><code>number</code></td><td><code>1.0</code></td><td>Nucleus sampling</td></tr>
+<tr><td><code>stop</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>Stop sequences</td></tr>
+<tr><td><code>timeout</code></td><td><code>number</code></td><td><code>60000</code></td><td>Request timeout (ms)</td></tr>
+<tr><td><code>baseUrl</code></td><td><code>string</code></td><td><code>"<a href="https://api.anthropic.com"">https://api.anthropic.com"</a></code></td><td>API base URL</td></tr>
+<tr><td><code>anthropicVersion</code></td><td><code>string</code></td><td><code>"2023-06-01"</code></td><td>API version header</td></tr>
+<tr><td><code>systemPrompt</code></td><td><code>string</code></td><td>—</td><td>Default system message</td></tr>
+<tr><td><code>verbose</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Console debug logging</td></tr>
+<tr><td><code>callbacks</code></td><td><code>CallbackHandler[]</code></td><td><code>[]</code></td><td>Lifecycle callbacks</td></tr>
+<tr><td><code>streaming</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Enable streaming mode</td></tr></tbody></table>
+
+<p><strong>Methods:</strong></p>
+
+<pre><code class="language-typescript">call(messages: Message[], options?: RunOptions): Promise&lt;Message&gt;
+predict(messages: Message[], options?: RunOptions): Promise&lt;string&gt;
+invoke(messages: Message[], options?: RunOptions): Promise&lt;Message&gt;
+stream(messages: Message[], callback: StreamCallback, options?: RunOptions): Promise&lt;void&gt;
+callWithTools(messages: Message[], tools: FunctionDefinition[], options?: ToolCallOptions): Promise&lt;Message&gt;
+generateStructured&lt;T&gt;(messages: Message[], schema: StructuredOutputSchema, options?: RunOptions): Promise&lt;T&gt;
+generate(messages: Message[][], options?: RunOptions): Promise&lt;LLMResult&gt;
+toJSON(): Record&lt;string, unknown&gt;</code></pre>
+
+<hr>
+
+<h3 id="chatopenai">ChatOpenAI</h3>
+
+<pre><code class="language-typescript">import { ChatOpenAI } from 'fireworks-plus-plus'
+new ChatOpenAI(config?: ChatOpenAIConfig)</code></pre>
+
+<p><strong>Config:</strong> Same shape as <code>ChatAnthropicConfig</code> with <code>apiKey</code> defaulting to <code>OPENAI_API_KEY</code> env, <code>model</code> defaulting to <code>"gpt-4o"</code>, and additional <code>organization?: string</code>.</p>
+
+<hr>
+
+<h3 id="chatgemini">ChatGemini</h3>
+
+<pre><code class="language-typescript">import { ChatGemini } from 'fireworks-plus-plus'
+new ChatGemini(config?: ChatGeminiConfig)</code></pre>
+
+<p><strong>Config:</strong> Same shape with <code>apiKey</code> defaulting to <code>GEMINI_API_KEY</code> env, <code>model</code> defaulting to <code>"gemini-2.0-flash"</code>, and <code>baseUrl?: string</code>.</p>
+
+<hr>
+
+<h3 id="chatperplexity">ChatPerplexity</h3>
+
+<pre><code class="language-typescript">import { ChatPerplexity } from 'fireworks-plus-plus'
+new ChatPerplexity(config?: ChatPerplexityConfig)</code></pre>
+
+<p><strong>Config:</strong> Same shape with <code>apiKey</code> defaulting to <code>PERPLEXITY_API_KEY</code> env, <code>model</code> defaulting to <code>"llama-3.1-sonar-large-128k-online"</code>.</p>
+
+<hr>
+
+<h3 id="chatollama">ChatOllama</h3>
+
+<pre><code class="language-typescript">import { ChatOllama } from 'fireworks-plus-plus'
+new ChatOllama(config?: ChatOllamaConfig)</code></pre>
+
+<p><strong>Config:</strong> <code>model</code> (default <code>"llama3.2"</code>), <code>baseUrl</code> (default <code>"<a href="http://localhost:11434"">http://localhost:11434"</a></code>), plus standard temperature/maxTokens/etc.</p>
+
+<hr>
+
+<h2 id="llms-text-completion">LLMs (Text Completion)</h2>
+
+<h3 id="anthropic">Anthropic</h3>
+
+<pre><code class="language-typescript">import { Anthropic } from 'fireworks-plus-plus'
+new Anthropic(config?: AnthropicLLMConfig)</code></pre>
+
+<p><strong>Methods:</strong></p>
+
+<pre><code class="language-typescript">call(prompt: string, options?: RunOptions): Promise&lt;string&gt;
+predict(text: string, options?: RunOptions): Promise&lt;string&gt;
+stream(prompt: string, callback: StreamCallback, options?: RunOptions): Promise&lt;void&gt;
+generate(prompts: string[], options?: RunOptions): Promise&lt;LLMResult&gt;</code></pre>
+
+<p>Also available: <code>OpenAI</code>, <code>PerplexityLLM</code>, <code>OllamaLLM</code> with equivalent shapes.</p>
+
+<p>Also available: <code>GeminiLLM</code> with equivalent shape and <code>model</code> defaulting to <code>"gemini-2.0-flash"</code>.</p>
+
+<hr>
+
+<h2 id="prompts">Prompts</h2>
+
+<h3 id="prompttemplate">PromptTemplate</h3>
+
+<pre><code class="language-typescript">import { PromptTemplate } from 'fireworks-plus-plus'
+new PromptTemplate(template: string, inputVariables?: string[], options?: { templateFormat?: 'f-string' | 'mustache' })</code></pre>
+
+<p><strong>Static factory:</strong></p>
+
+<pre><code class="language-typescript">PromptTemplate.fromTemplate(template: string): PromptTemplate</code></pre>
+
+<p><strong>Methods:</strong></p>
+
+<pre><code class="language-typescript">format(values: Record&lt;string, string&gt;): string
+partial(partialValues: Record&lt;string, string&gt;): PromptTemplate
+getInputVariables(): string[]
+toJSON(): Record&lt;string, unknown&gt;</code></pre>
+
+<hr>
+
+<h3 id="chatprompttemplate">ChatPromptTemplate</h3>
+
+<pre><code class="language-typescript">import { ChatPromptTemplate } from 'fireworks-plus-plus'
+new ChatPromptTemplate(messageTemplates: MessageTemplate[])</code></pre>
+
+<p><strong>Static factory:</strong></p>
+
+<pre><code class="language-typescript">ChatPromptTemplate.fromMessages(templates: Array&lt;[MessageRole | string, string]&gt;): ChatPromptTemplate</code></pre>
+
+<p><strong>Methods:</strong></p>
+
+<pre><code class="language-typescript">formatMessages(values: Record&lt;string, string&gt;): Message[]
+format(values: Record&lt;string, string&gt;): string       // Returns formatted string (uses first message)
+partial(partialValues: Record&lt;string, string&gt;): ChatPromptTemplate
+getInputVariables(): string[]
+toJSON(): Record&lt;string, unknown&gt;</code></pre>
+
+<hr>
+
+<h3 id="fewshotprompttemplate">FewShotPromptTemplate</h3>
+
+<pre><code class="language-typescript">import { FewShotPromptTemplate } from 'fireworks-plus-plus'
+new FewShotPromptTemplate(config: FewShotPromptTemplateConfig)</code></pre>
+
+<p><strong>Config:</strong></p>
+
+<pre><code class="language-typescript">interface FewShotPromptTemplateConfig {
+  examples: FewShotExample[]
+  exampleTemplate: string
+  prefix?: string
+  suffix: string
+  inputVariables: string[]
+  exampleSeparator?: string  // Default: "\n\n"
+}</code></pre>
+
+<p><strong>Methods:</strong> <code>format()</code>, <code>getInputVariables()</code></p>
+
+<hr>
+
+<h3 id="systemhumanai-message-templates">System/Human/AI Message Templates</h3>
+
+<pre><code class="language-typescript">import { SystemMessagePromptTemplate, HumanMessagePromptTemplate, AIMessagePromptTemplate } from 'fireworks-plus-plus'
+
+// Each wraps a PromptTemplate and produces a Message with the correct role
+new SystemMessagePromptTemplate(template: string)
+new HumanMessagePromptTemplate(template: string)
+new AIMessagePromptTemplate(template: string)
+
+// Methods:
+format(values: Record&lt;string, string&gt;): Message</code></pre>
+
+<hr>
+
+<h2 id="chains">Chains</h2>
+
+<h3 id="llmchain">LLMChain</h3>
+
+<pre><code class="language-typescript">import { LLMChain } from 'fireworks-plus-plus'
+new LLMChain(
+  llm: BaseLLM | BaseChatModel,
+  prompt: BasePromptTemplate,
+  config?: LLMChainConfig
+)</code></pre>
+
+<p><strong>Config:</strong></p>
+
+<pre><code class="language-typescript">interface LLMChainConfig {
+  outputKey?: string                      // Default: "text"
+  outputParser?: BaseOutputParser&lt;unknown&gt;
+  callbacks?: CallbackHandler[]
+  verbose?: boolean
+}</code></pre>
+
+<p><strong>Methods:</strong></p>
+
+<pre><code class="language-typescript">run(input: string | Record&lt;string, string&gt;): Promise&lt;string&gt;
+predict(inputs: Record&lt;string, string&gt;): Promise&lt;string&gt;
+call(inputs: ChainValues, callbacks?: CallbackHandler[]): Promise&lt;ChainValues&gt;</code></pre>
+
+<hr>
+
+<h3 id="sequentialchain">SequentialChain</h3>
+
+<pre><code class="language-typescript">import { SequentialChain } from 'fireworks-plus-plus'
+new SequentialChain(
+  chains: BaseChain[],
+  inputVariables: string[],
+  outputVariables: string[],
+  config?: SequentialChainConfig
+)</code></pre>
+
+<p><strong>Config:</strong> <code>returnAll?: boolean</code> — if <code>true</code>, includes all intermediate values in output.</p>
+
+<hr>
+
+<h3 id="simplesequentialchain">SimpleSequentialChain</h3>
+
+<pre><code class="language-typescript">import { SimpleSequentialChain } from 'fireworks-plus-plus'
+new SimpleSequentialChain(chains: BaseChain[], config?: BaseChainConfig)</code></pre>
+
+<p>Input key: <code>"input"</code>. Output key: <code>"output"</code>.</p>
+
+<hr>
+
+<h3 id="retrievalqachain">RetrievalQAChain</h3>
+
+<pre><code class="language-typescript">import { RetrievalQAChain } from 'fireworks-plus-plus'
+new RetrievalQAChain(
+  llm: BaseLLM | BaseChatModel,
+  retriever: BaseRetriever,
+  config?: RetrievalQAChainConfig
+)</code></pre>
+
+<p><strong>Config:</strong> <code>inputKey?: string</code>, <code>outputKey?: string</code>, <code>returnSourceDocuments?: boolean</code>, <code>prompt?: BasePromptTemplate</code>.</p>
+
+<hr>
+
+<h2 id="agents">Agents</h2>
+
+<h3 id="createagent">createAgent</h3>
+
+<pre><code class="language-typescript">import { createAgent } from 'fireworks-plus-plus'
+
+createAgent(config?: CreateAgentConfig): SimpleAgent</code></pre>
+
+<h3 id="simpleagent">SimpleAgent</h3>
+
+<pre><code class="language-typescript">import { createAgent } from 'fireworks-plus-plus'
+
+const agent = createAgent()
+
+ask(input: string, options?: { threadId?: string; callbacks?: CallbackHandler[] }): Promise&lt;SimpleAskResult&gt;
+use(name: string, definition: SimpleToolDefinition): SimpleAgent
+use(tool: BaseTool): SimpleAgent
+enableGovernance(config: SimpleGovernanceConfig): SimpleAgent
+alerts(): Promise&lt;MonitoringAlert[]&gt;
+dashboard(options?: { html?: boolean; writeTo?: string }): Promise&lt;MonitoringSnapshot | string&gt;
+createServer(config?: Omit&lt;ManagementServerConfig, "auditPath" | "checkpointDir" | "workflowDir"&gt;): ManagementServer
+toExecutor(threadId?: string): ToolCallingAgentExecutor</code></pre>
+
+<hr>
+
+<h2 id="mcp">MCP</h2>
+
+<h3 id="mcpserver">MCPServer</h3>
+
+<pre><code class="language-typescript">import { MCPServer } from 'fireworks-plus-plus'
+new MCPServer(config?: MCPServerConfig)
+
+handleMessage(message: MCPJsonRpcMessage): Promise&lt;MCPJsonRpcResponse | MCPJsonRpcError | undefined&gt;
+getCapabilities(): MCPServerCapabilities</code></pre>
+
+<h3 id="mcpclient">MCPClient</h3>
+
+<pre><code class="language-typescript">import { MCPClient } from 'fireworks-plus-plus'
+new MCPClient(config: MCPClientConfig)
+
+initialize(): Promise&lt;MCPInitializeResult&gt;
+listTools(): Promise&lt;MCPToolDefinition[]&gt;
+callTool(name: string, arguments_?: Record&lt;string, unknown&gt;): Promise&lt;MCPToolCallResult&gt;
+listResources(): Promise&lt;MCPResource[]&gt;
+readResource(uri: string): Promise&lt;MCPResourceContent[]&gt;
+listPrompts(): Promise&lt;MCPPromptDefinition[]&gt;
+getPrompt(name: string, arguments_?: Record&lt;string, unknown&gt;): Promise&lt;MCPPromptResult&gt;
+asTools(): Promise&lt;BaseTool[]&gt;
+close(): Promise&lt;void&gt;</code></pre>
+
+<h3 id="inmemorymcptransport">InMemoryMCPTransport</h3>
+
+<pre><code class="language-typescript">import { InMemoryMCPTransport } from 'fireworks-plus-plus'
+new InMemoryMCPTransport(handler: (message) =&gt; Promise&lt;unknown&gt;)</code></pre>
+
+<hr>
+
+<h3 id="toolcallingagent">ToolCallingAgent</h3>
+
+<pre><code class="language-typescript">import { ToolCallingAgent } from 'fireworks-plus-plus'
+new ToolCallingAgent(
+  llm: BaseChatModel,
+  tools: BaseTool[],
+  config?: ToolCallingAgentConfig
+)</code></pre>
+
+<p><strong>Config:</strong> <code>memory?: BaseMemory</code>, <code>systemPrompt?: string</code>, <code>toolChoice?: ToolChoice</code>.</p>
+
+<h3 id="toolcallingagentexecutor">ToolCallingAgentExecutor</h3>
+
+<pre><code class="language-typescript">import { ToolCallingAgentExecutor } from 'fireworks-plus-plus'
+new ToolCallingAgentExecutor(agent: ToolCallingAgent, options?: ToolCallingExecutorConfig)</code></pre>
+
+<p><strong>Config:</strong> <code>ExecutorOptions</code> plus <code>checkpointStore?: CheckpointStore</code>, <code>threadId?: string</code>, <code>checkpointMetadata?: Record<string, unknown></code>. Also supports <code>requireApproval?: boolean | string[] | ((action, checkpoint) => boolean | Promise<boolean>)</code>.</p>
+
+<p><strong>Methods:</strong></p>
+
+<pre><code class="language-typescript">call(inputs: ChainValues, callbacks?: CallbackHandler[]): Promise&lt;ChainValues&gt;
+run(input: string, callbacks?: CallbackHandler[]): Promise&lt;string&gt;
+resume(threadId: string, callbacks?: CallbackHandler[]): Promise&lt;ChainValues&gt;
+resumeFromCheckpoint(checkpointId: string, callbacks?: CallbackHandler[]): Promise&lt;ChainValues&gt;
+approve(threadId: string, decision?: ApprovalDecision): Promise&lt;ChainValues&gt;
+approveCheckpoint(checkpointId: string, decision?: ApprovalDecision): Promise&lt;ChainValues&gt;
+reject(threadId: string, decision?: ApprovalDecision): Promise&lt;ChainValues&gt;
+rejectCheckpoint(checkpointId: string, decision?: ApprovalDecision): Promise&lt;ChainValues&gt;</code></pre>
+
+<h3 id="reactagent">ReActAgent</h3>
+
+<pre><code class="language-typescript">import { ReActAgent } from 'fireworks-plus-plus'
+new ReActAgent(
+  llm: BaseChatModel,
+  tools: BaseTool[],
+  memory?: BaseMemory,
+  systemPrompt?: string
+)</code></pre>
+
+<h3 id="agentexecutor">AgentExecutor</h3>
+
+<pre><code class="language-typescript">import { AgentExecutor } from 'fireworks-plus-plus'
+new AgentExecutor(agent: BaseAgent, tools: BaseTool[], options?: ExecutorOptions)</code></pre>
+
+<hr>
+
+<h3 id="routerchain">RouterChain</h3>
+
+<pre><code class="language-typescript">import { RouterChain } from 'fireworks-plus-plus'
+new RouterChain(
+  intentRouter: IntentRouter,
+  destinations: Record&lt;string, BaseChain&gt;,
+  defaultChain: BaseChain,
+  config?: RouterChainConfig
+)</code></pre>
+
+<p><strong>Output keys:</strong> <code>output</code>, <code>destination</code></p>
+
+<hr>
+
+<h3 id="multiroutechain">MultiRouteChain</h3>
+
+<pre><code class="language-typescript">import { MultiRouteChain } from 'fireworks-plus-plus'
+new MultiRouteChain(
+  intentRouter: IntentRouter,
+  destinations: Record&lt;string, BaseChain&gt;,
+  defaultChain: BaseChain,
+  config?: BaseChainConfig
+)</code></pre>
+
+<p><strong>Output keys:</strong> <code>output</code>, <code>destination</code>, <code>confidence</code>, <code>reasoning</code></p>
+
+<hr>
+
+<h3 id="transformchain">TransformChain</h3>
+
+<pre><code class="language-typescript">import { TransformChain } from 'fireworks-plus-plus'
+new TransformChain(config: TransformChainConfig)</code></pre>
+
+<p><strong>Config:</strong></p>
+
+<pre><code class="language-typescript">interface TransformChainConfig {
+  inputVariables: string[]
+  outputVariables: string[]
+  transform: (inputs: ChainValues) =&gt; ChainValues | Promise&lt;ChainValues&gt;
+  callbacks?: CallbackHandler[]
+  verbose?: boolean
+}</code></pre>
+
+<hr>
+
+<h2 id="agents">Agents</h2>
+
+<h3 id="reactagent">ReActAgent</h3>
+
+<pre><code class="language-typescript">import { ReActAgent } from 'fireworks-plus-plus'
+new ReActAgent(
+  llm: BaseChatModel,
+  tools: BaseTool[],
+  memory?: BaseMemory,
+  systemPrompt?: string
+)</code></pre>
+
+<p><strong>Properties:</strong></p>
+<ul><li><code>agentType: "react"</code></li><li><code>allowedTools: string[]</code></li></ul>
+
+<p><strong>Methods:</strong></p>
+<pre><code class="language-typescript">plan(
+  intermediateSteps: Array&lt;[AgentAction, string]&gt;,
+  inputs: ChainValues
+): Promise&lt;AgentAction | AgentFinish&gt;</code></pre>
+
+<h3 id="agentexecutor">AgentExecutor</h3>
+
+<pre><code class="language-typescript">import { AgentExecutor } from 'fireworks-plus-plus'
+new AgentExecutor(agent: BaseAgent, tools: BaseTool[], options?: ExecutorOptions)</code></pre>
+
+<p><strong>Methods:</strong></p>
+<pre><code class="language-typescript">call(inputs: ChainValues, callbacks?: CallbackHandler[]): Promise&lt;ChainValues&gt;
+run(input: string, callbacks?: CallbackHandler[]): Promise&lt;string&gt;</code></pre>
+
+<p><strong>ExecutorOptions:</strong></p>
+
+<table><thead><tr><th>Option</th><th>Type</th><th>Default</th></tr></thead><tbody><tr><td><code>maxIterations</code></td><td><code>number</code></td><td><code>15</code></td></tr>
+<tr><td><code>returnIntermediateSteps</code></td><td><code>boolean</code></td><td><code>false</code></td></tr>
+<tr><td><code>earlyStoppingMethod</code></td><td>`"force" \</td><td>"generate"`</td><td><code>"force"</code></td></tr>
+<tr><td><code>handleParsingErrors</code></td><td><code>boolean</code></td><td><code>true</code></td></tr>
+<tr><td><code>verbose</code></td><td><code>boolean</code></td><td><code>false</code></td></tr></tbody></table>
+
+<hr>
+
+<h2 id="tools">Tools</h2>
+
+<h3 id="basetool">BaseTool</h3>
+
+<pre><code class="language-typescript">abstract class BaseTool {
+  abstract name: string
+  abstract description: string
+  abstract call(input: string): Promise&lt;ToolResult&gt;
+  run(input: string, callbacks?: CallbackHandler[]): Promise&lt;string&gt;
+  toSchema(): Record&lt;string, unknown&gt;
+}</code></pre>
+
+<h3 id="dynamictool">DynamicTool</h3>
+
+<pre><code class="language-typescript">import { DynamicTool } from 'fireworks-plus-plus'
+new DynamicTool(config: {
+  name: string
+  description: string
+  func: (input: string) =&gt; Promise&lt;ToolResult&gt;
+  callbacks?: CallbackHandler[]
+  verbose?: boolean
+  returnDirect?: boolean
+})</code></pre>
+
+<h3 id="calculatortool">CalculatorTool</h3>
+
+<pre><code class="language-typescript">import { CalculatorTool } from 'fireworks-plus-plus'
+new CalculatorTool(config?: BaseToolConfig)
+// name: "calculator"</code></pre>
+
+<h3 id="researchtool">ResearchTool</h3>
+
+<pre><code class="language-typescript">import { ResearchTool } from 'fireworks-plus-plus'
+new ResearchTool(config?: ResearchToolConfig)
+// name: "research"</code></pre>
+
+<p><strong>Config:</strong> <code>maxResults?: number</code> (default 3), <code>language?: string</code> (default <code>"en"</code>).</p>
+
+<h3 id="browsertool">BrowserTool</h3>
+
+<pre><code class="language-typescript">import { BrowserTool } from 'fireworks-plus-plus'
+new BrowserTool(config?: BrowserToolConfig)
+// name: "browser"</code></pre>
+
+<h3 id="sshtool">SSHTool</h3>
+
+<pre><code class="language-typescript">import { SSHTool } from 'fireworks-plus-plus'
+new SSHTool(config: SSHToolConfig)
+// name: "ssh"</code></pre>
+
+<p><strong>Config:</strong> <code>connection: SSHConnectionConfig</code> (required), <code>timeout?: number</code>.</p>
+
+<h3 id="documenttool">DocumentTool</h3>
+
+<pre><code class="language-typescript">import { DocumentTool } from 'fireworks-plus-plus'
+new DocumentTool(config?: DocumentToolConfig)
+// name: "document"</code></pre>
+
+<p><strong>Config:</strong> <code>outputDir?: string</code>, <code>defaultFormat?: DocumentFormat</code> (<code>"txt" | "md" | "html" | "json" | "csv"</code>).</p>
+
+<h3 id="editortool">EditorTool</h3>
+
+<pre><code class="language-typescript">import { EditorTool } from 'fireworks-plus-plus'
+new EditorTool(config?: EditorToolConfig)
+// name: "editor"</code></pre>
+
+<p><strong>Config:</strong> <code>workspacePath?: string</code>, <code>openInEditor?: boolean</code>, <code>editor?: string</code>.</p>
+
+<hr>
+
+<h2 id="memory">Memory</h2>
+
+<h3 id="conversationbuffermemory">ConversationBufferMemory</h3>
+
+<pre><code class="language-typescript">import { ConversationBufferMemory } from 'fireworks-plus-plus'
+new ConversationBufferMemory(config?: BufferMemoryConfig)</code></pre>
+
+<p><strong>Methods:</strong></p>
+
+<pre><code class="language-typescript">loadMemoryVariables(inputs?: ChainValues): Promise&lt;Record&lt;string, unknown&gt;&gt;
+saveContext(inputs: ChainValues, outputs: ChainValues): Promise&lt;void&gt;
+clear(): Promise&lt;void&gt;
+getChatMessages(): Message[]
+getBufferString(): string
+addUserMessage(content: string): void
+addAIMessage(content: string): void
+toString(): string</code></pre>
+
+<hr>
+
+<h3 id="conversationwindowmemory">ConversationWindowMemory</h3>
+
+<pre><code class="language-typescript">import { ConversationWindowMemory } from 'fireworks-plus-plus'
+new ConversationWindowMemory(config?: WindowMemoryConfig)
+// Config: k?: number (default 5)</code></pre>
+
+<p>Same methods as <code>ConversationBufferMemory</code>.</p>
+
+<hr>
+
+<h3 id="conversationsummarymemory">ConversationSummaryMemory</h3>
+
+<pre><code class="language-typescript">import { ConversationSummaryMemory } from 'fireworks-plus-plus'
+new ConversationSummaryMemory(config: SummaryMemoryConfig)
+// config.llm is required</code></pre>
+
+<p><strong>Additional methods:</strong></p>
+
+<pre><code class="language-typescript">getSummary(): string</code></pre>
+
+<hr>
+
+<h3 id="threadedmemory">ThreadedMemory</h3>
+
+<pre><code class="language-typescript">import { ThreadedMemory } from 'fireworks-plus-plus'
+new ThreadedMemory(config?: ThreadMemoryConfig)</code></pre>
+
+<p><strong>Methods:</strong></p>
+
+<pre><code class="language-typescript">createThread(id?: string): string
+setActiveThread(threadId: string): void
+getActiveThreadId(): string
+getThread(threadId: string): Promise&lt;Message[]&gt;
+addToThread(threadId: string, message: Message): Promise&lt;void&gt;
+getActiveThreadMessages(): Promise&lt;Message[]&gt;
+loadMemoryVariables(inputs?: ChainValues): Promise&lt;Record&lt;string, unknown&gt;&gt;
+saveContext(inputs: ChainValues, outputs: ChainValues): Promise&lt;void&gt;
+clearThread(threadId: string): Promise&lt;void&gt;
+clear(): Promise&lt;void&gt;
+listThreads(): ThreadSummary[]
+deleteThread(threadId: string): void
+toString(): string</code></pre>
+
+<hr>
+
+<h2 id="output-parsers">Output Parsers</h2>
+
+<h3 id="jsonoutputparser">JsonOutputParser</h3>
+
+<pre><code class="language-typescript">import { JsonOutputParser } from 'fireworks-plus-plus'
+new JsonOutputParser()
+parse(output: string): Record&lt;string, unknown&gt;
+getFormatInstructions(): string</code></pre>
+
+<h3 id="structuredoutputparser">StructuredOutputParser</h3>
+
+<pre><code class="language-typescript">import { StructuredOutputParser } from 'fireworks-plus-plus'
+new StructuredOutputParser(schema: OutputSchema)
+StructuredOutputParser.fromNamesAndDescriptions(fields: Record&lt;string, string&gt;): StructuredOutputParser
+parse(output: string): Record&lt;string, unknown&gt;
+getFormatInstructions(): string</code></pre>
+
+<h3 id="commaseparatedlistoutputparser">CommaSeparatedListOutputParser</h3>
+
+<pre><code class="language-typescript">import { CommaSeparatedListOutputParser } from 'fireworks-plus-plus'
+new CommaSeparatedListOutputParser()
+parse(output: string): string[]</code></pre>
+
+<h3 id="numberedlistoutputparser">NumberedListOutputParser</h3>
+
+<pre><code class="language-typescript">import { NumberedListOutputParser } from 'fireworks-plus-plus'
+new NumberedListOutputParser()
+parse(output: string): string[]</code></pre>
+
+<h3 id="lineoutputparser">LineOutputParser</h3>
+
+<pre><code class="language-typescript">import { LineOutputParser } from 'fireworks-plus-plus'
+new LineOutputParser()
+parse(output: string): string[]</code></pre>
+
+<hr>
+
+<h2 id="document-loaders">Document Loaders</h2>
+
+<h3 id="textloader">TextLoader</h3>
+
+<pre><code class="language-typescript">import { TextLoader } from 'fireworks-plus-plus'
+new TextLoader(filePath: string, encoding?: BufferEncoding)
+load(): Promise&lt;Document[]&gt;
+loadAndSplit(splitter?: BaseTextSplitter): Promise&lt;Document[]&gt;
+lazyLoad(): AsyncGenerator&lt;Document&gt;</code></pre>
+
+<h3 id="jsonloader">JSONLoader</h3>
+
+<pre><code class="language-typescript">import { JSONLoader } from 'fireworks-plus-plus'
+new JSONLoader(filePath: string, pointers?: string[])
+load(): Promise&lt;Document[]&gt;</code></pre>
+
+<h3 id="csvloader">CSVLoader</h3>
+
+<pre><code class="language-typescript">import { CSVLoader } from 'fireworks-plus-plus'
+new CSVLoader(filePath: string, options?: CSVLoaderOptions)
+load(): Promise&lt;Document[]&gt;</code></pre>
+
+<hr>
+
+<h2 id="text-splitters">Text Splitters</h2>
+
+<h3 id="charactertextsplitter">CharacterTextSplitter</h3>
+
+<pre><code class="language-typescript">import { CharacterTextSplitter } from 'fireworks-plus-plus'
+new CharacterTextSplitter(options?: TextSplitterOptions)
+splitText(text: string): Promise&lt;string[]&gt;
+splitDocuments(documents: Document[]): Promise&lt;Document[]&gt;</code></pre>
+
+<h3 id="recursivecharactertextsplitter">RecursiveCharacterTextSplitter</h3>
+
+<pre><code class="language-typescript">import { RecursiveCharacterTextSplitter } from 'fireworks-plus-plus'
+new RecursiveCharacterTextSplitter(options?: TextSplitterOptions)
+splitText(text: string): Promise&lt;string[]&gt;
+splitDocuments(documents: Document[]): Promise&lt;Document[]&gt;</code></pre>
+
+<p><strong>TextSplitterOptions:</strong></p>
+
+<pre><code class="language-typescript">interface TextSplitterOptions {
+  chunkSize?: number      // Default: 1000
+  chunkOverlap?: number   // Default: 200
+  separators?: string[]   // RecursiveCharacterTextSplitter only
+}</code></pre>
+
+<hr>
+
+<h2 id="embeddings">Embeddings</h2>
+
+<h3 id="fakeembeddings">FakeEmbeddings</h3>
+
+<pre><code class="language-typescript">import { FakeEmbeddings } from 'fireworks-plus-plus'
+new FakeEmbeddings(dimensions?: number)  // Default: 128
+embedQuery(text: string): Promise&lt;number[]&gt;
+embedDocuments(texts: string[]): Promise&lt;number[][]&gt;</code></pre>
+
+<h3 id="openaiembeddings">OpenAIEmbeddings</h3>
+
+<pre><code class="language-typescript">import { OpenAIEmbeddings } from 'fireworks-plus-plus'
+new OpenAIEmbeddings(config?: OpenAIEmbeddingsConfig)
+embedQuery(text: string): Promise&lt;number[]&gt;
+embedDocuments(texts: string[]): Promise&lt;number[][]&gt;</code></pre>
+
+<p><strong>Config:</strong> <code>apiKey?: string</code>, <code>model?: string</code>, <code>baseUrl?: string</code>, <code>organization?: string</code>, <code>timeout?: number</code>, <code>batchSize?: number</code>, <code>dimensions?: number</code>.</p>
+
+<h3 id="baseembeddings-abstract">BaseEmbeddings (abstract)</h3>
+
+<pre><code class="language-typescript">import { BaseEmbeddings } from 'fireworks-plus-plus'
+abstract embedQuery(text: string): Promise&lt;number[]&gt;
+abstract embedDocuments(texts: string[]): Promise&lt;number[][]&gt;
+static cosineSimilarity(a: number[], b: number[]): number
+static normalize(vector: number[]): number[]</code></pre>
+
+<hr>
+
+<h2 id="vector-stores">Vector Stores</h2>
+
+<h3 id="inmemoryvectorstore">InMemoryVectorStore</h3>
+
+<pre><code class="language-typescript">import { InMemoryVectorStore } from 'fireworks-plus-plus'
+new InMemoryVectorStore(embeddings: BaseEmbeddings)</code></pre>
+
+<p><strong>Static factories:</strong></p>
+
+<pre><code class="language-typescript">InMemoryVectorStore.fromDocuments(docs: Document[], embeddings: BaseEmbeddings): Promise&lt;InMemoryVectorStore&gt;
+InMemoryVectorStore.fromTexts(texts: string[], metadatas: Record&lt;string, unknown&gt;[], embeddings: BaseEmbeddings): Promise&lt;InMemoryVectorStore&gt;</code></pre>
+
+<p><strong>Methods:</strong></p>
+
+<pre><code class="language-typescript">addDocuments(documents: Document[]): Promise&lt;void&gt;
+addVectors(vectors: number[][], documents: Document[]): Promise&lt;void&gt;
+similaritySearch(query: string, k: number, filter?: Record&lt;string, unknown&gt;): Promise&lt;Document[]&gt;
+similaritySearchWithScore(query: string, k: number, filter?: Record&lt;string, unknown&gt;): Promise&lt;SimilarityResult[]&gt;
+delete(filter: Record&lt;string, unknown&gt;): Promise&lt;void&gt;
+get size(): number</code></pre>
+
+<hr>
+
+<h2 id="retrievers">Retrievers</h2>
+
+<h3 id="baseretriever-abstract">BaseRetriever (abstract)</h3>
+
+<pre><code class="language-typescript">import { BaseRetriever } from 'fireworks-plus-plus'
+abstract getRelevantDocuments(query: string): Promise&lt;Document[]&gt;
+invoke(query: string): Promise&lt;Document[]&gt;</code></pre>
+
+<h3 id="vectorstoreretriever">VectorStoreRetriever</h3>
+
+<pre><code class="language-typescript">import { VectorStoreRetriever } from 'fireworks-plus-plus'
+new VectorStoreRetriever(vectorStore: VectorStore, config?: VectorStoreRetrieverConfig)
+getRelevantDocuments(query: string): Promise&lt;Document[]&gt;
+invoke(query: string): Promise&lt;Document[]&gt;</code></pre>
+
+<p><strong>Config:</strong> <code>k?: number</code>, <code>filter?: Record<string, unknown></code>, <code>searchType?: 'similarity' | 'mmr'</code>, <code>fetchK?: number</code>, <code>lambdaMult?: number</code>.</p>
+
+<hr>
+
+<h2 id="callbacks">Callbacks</h2>
+
+<h3 id="loggingcallbackhandler">LoggingCallbackHandler</h3>
+
+<pre><code class="language-typescript">import { LoggingCallbackHandler } from 'fireworks-plus-plus'
+new LoggingCallbackHandler(options?: LoggingCallbackHandlerOptions)</code></pre>
+
+<p><strong>Options:</strong> <code>level?: 'debug' | 'info' | 'warn'</code> (default <code>"info"</code>), <code>prefix?: string</code> (default <code>"[Fireworks++]"</code>).</p>
+
+<h3 id="streamingcallbackhandler">StreamingCallbackHandler</h3>
+
+<pre><code class="language-typescript">import { StreamingCallbackHandler } from 'fireworks-plus-plus'
+new StreamingCallbackHandler(onToken: (token: string) =&gt; void)
+getBuffer(): string
+reset(): void</code></pre>
+
+<h3 id="tracingcallbackhandler">TracingCallbackHandler</h3>
+
+<pre><code class="language-typescript">import { TracingCallbackHandler } from 'fireworks-plus-plus'
+new TracingCallbackHandler()
+getRun(runId: string): TraceRun | undefined
+getRuns(): TraceRun[]
+getRootRuns(): TraceRun[]
+getSummary(): TraceSummary
+clear(): void
+printSummary(): void</code></pre>
+
+<h3 id="costtrackinghandler">CostTrackingHandler</h3>
+
+<pre><code class="language-typescript">import { CostTrackingHandler } from 'fireworks-plus-plus'
+new CostTrackingHandler(options?: CostTrackingHandlerOptions)
+getSummary(): CostSummary
+reset(): void
+printSummary(): void</code></pre>
+
+<p><strong>Options:</strong> <code>pricing?: Record<string, { input: number; output: number }></code></p>
+
+<hr>
+
+<h2 id="evaluations">Evaluations</h2>
+
+<h3 id="runevaluation">runEvaluation</h3>
+
+<pre><code class="language-typescript">import { runEvaluation } from 'fireworks-plus-plus'
+
+runEvaluation&lt;TInput, TExpected, TActual&gt;({
+  cases,
+  target,
+  evaluator
+}): Promise&lt;EvaluationSummary&lt;TInput, TExpected, TActual&gt;&gt;</code></pre>
+
+<h3 id="exactmatchevaluator">ExactMatchEvaluator</h3>
+
+<pre><code class="language-typescript">import { ExactMatchEvaluator } from 'fireworks-plus-plus'
+new ExactMatchEvaluator()
+evaluate(actual: unknown, expected: unknown): Promise&lt;EvaluationOutcome&gt;</code></pre>
+
+<h3 id="containsstringevaluator">ContainsStringEvaluator</h3>
+
+<pre><code class="language-typescript">import { ContainsStringEvaluator } from 'fireworks-plus-plus'
+new ContainsStringEvaluator()
+evaluate(actual: string, expected: string): Promise&lt;EvaluationOutcome&gt;</code></pre>
+
+<hr>
+
+<h2 id="checkpoints">Checkpoints</h2>
+
+<h3 id="inmemorycheckpointstore">InMemoryCheckpointStore</h3>
+
+<pre><code class="language-typescript">import { InMemoryCheckpointStore } from 'fireworks-plus-plus'
+new InMemoryCheckpointStore()
+save(checkpoint: AgentCheckpoint): Promise&lt;void&gt;
+get(checkpointId: string): Promise&lt;AgentCheckpoint | undefined&gt;
+getLatest(threadId: string): Promise&lt;AgentCheckpoint | undefined&gt;
+list(options?: ListCheckpointsOptions): Promise&lt;AgentCheckpoint[]&gt;
+delete(checkpointId: string): Promise&lt;void&gt;
+clear(): Promise&lt;void&gt;</code></pre>
+
+<h3 id="filecheckpointstore">FileCheckpointStore</h3>
+
+<pre><code class="language-typescript">import { FileCheckpointStore } from 'fireworks-plus-plus'
+new FileCheckpointStore({ directory?: string })</code></pre>
+
+<h3 id="approvaldecision">ApprovalDecision</h3>
+
+<pre><code class="language-typescript">interface ApprovalDecision {
+  reviewer?: string
+  reason?: string
+}</code></pre>
+
+<hr>
+
+<h2 id="governance">Governance</h2>
+
+<h3 id="rbacauthorizer">RBACAuthorizer</h3>
+
+<pre><code class="language-typescript">import { RBACAuthorizer } from 'fireworks-plus-plus'
+new RBACAuthorizer(config?: RBACAuthorizerConfig)
+
+authorize(request: AuthorizationRequest): Promise&lt;GovernanceDecision&gt;
+registerRole(role: GovernanceRole): void</code></pre>
+
+<p><strong>Config:</strong> <code>roles?: GovernanceRole[]</code>, <code>defaultAllow?: boolean</code>.</p>
+
+<h3 id="policyengine">PolicyEngine</h3>
+
+<pre><code class="language-typescript">import { PolicyEngine } from 'fireworks-plus-plus'
+new PolicyEngine(config?: PolicyEngineConfig)
+
+evaluate(context: GovernanceRuleContext): Promise&lt;GovernanceDecision&gt;
+registerRule(rule: GovernanceRule): void</code></pre>
+
+<p><strong>Config:</strong> <code>rules?: GovernanceRule[]</code>, <code>defaultAllow?: boolean</code>.</p>
+
+<h3 id="budgetmanager">BudgetManager</h3>
+
+<pre><code class="language-typescript">import { BudgetManager } from 'fireworks-plus-plus'
+new BudgetManager(config?: BudgetManagerConfig)
+
+consume(name: string, amount?: number): BudgetDecision
+getUsage(name: string): BudgetUsage | undefined
+getAllUsage(): BudgetUsage[]
+reset(name?: string): void
+setLimit(name: string, max: number): void</code></pre>
+
+<p><strong>Config:</strong> <code>limits?: BudgetLimit[]</code>.</p>
+
+<h3 id="inmemoryauditlogger">InMemoryAuditLogger</h3>
+
+<pre><code class="language-typescript">import { InMemoryAuditLogger } from 'fireworks-plus-plus'
+new InMemoryAuditLogger()
+
+record(event: AuditEvent): Promise&lt;void&gt;
+list(filter?: AuditEventFilter): Promise&lt;AuditEvent[]&gt;
+clear(): Promise&lt;void&gt;</code></pre>
+
+<h3 id="fileauditlogger">FileAuditLogger</h3>
+
+<pre><code class="language-typescript">import { FileAuditLogger } from 'fireworks-plus-plus'
+new FileAuditLogger({ filePath?: string })</code></pre>
+
+<h3 id="governancebudgethandler">GovernanceBudgetHandler</h3>
+
+<pre><code class="language-typescript">import { GovernanceBudgetHandler } from 'fireworks-plus-plus'
+new GovernanceBudgetHandler({
+  budgetManager: BudgetManager,
+  auditLogger?: AuditLogger
+})</code></pre>
+
+<p>Consumes <code>input_tokens</code>, <code>output_tokens</code>, and <code>total_tokens</code> budgets on <code>onLLMEnd()</code>.</p>
+
+<hr>
+
+<h2 id="auth">Auth</h2>
+
+<h3 id="hs256authenticator">HS256Authenticator</h3>
+
+<pre><code class="language-typescript">import { HS256Authenticator } from 'fireworks-plus-plus'
+new HS256Authenticator(config: HS256AuthenticatorConfig)
+
+authenticate(headers: Record&lt;string, string | string[] | undefined&gt;): Promise&lt;AuthSession | undefined&gt;</code></pre>
+
+<p><strong>Static helper:</strong> <code>HS256Authenticator.sign(claims: AuthClaims, secret: string): string</code></p>
+
+<h3 id="samlattributemapper">SAMLAttributeMapper</h3>
+
+<pre><code class="language-typescript">import { SAMLAttributeMapper } from 'fireworks-plus-plus'
+new SAMLAttributeMapper(config?: SAMLAttributeMapperConfig)
+
+map(attributes: Record&lt;string, unknown&gt;): AuthSession</code></pre>
+
+<hr>
+
+<h2 id="plugins">Plugins</h2>
+
+<h3 id="pluginregistry">PluginRegistry</h3>
+
+<pre><code class="language-typescript">import { PluginRegistry } from 'fireworks-plus-plus'
+new PluginRegistry()
+
+registerManifest(manifest: PluginManifest): void
+registerTool(plugin: ToolPluginDefinition): void
+registerLoader(plugin: LoaderPluginDefinition): void
+registerWorkflowNode(plugin: WorkflowNodePluginDefinition): void
+registerCallback(plugin: CallbackPluginDefinition): void
+createTool(name: string, context?: ToolPluginFactoryContext): BaseTool
+createLoader(name: string, context?: LoaderPluginFactoryContext): BaseDocumentLoader
+createWorkflowNode(name: string, context?: WorkflowPluginFactoryContext): WorkflowNodeHandler
+createCallback(name: string, context?: CallbackPluginFactoryContext): CallbackHandler
+list(): { tools: string[]; loaders: string[]; workflowNodes: string[]; callbacks: string[] }</code></pre>
+
+<hr>
+
+<h2 id="integrations">Integrations</h2>
+
+<h3 id="connectordispatcher">ConnectorDispatcher</h3>
+
+<pre><code class="language-typescript">import { ConnectorDispatcher } from 'fireworks-plus-plus'
+new ConnectorDispatcher({ connectors?: IntegrationConnector[] })
+
+add(connector: IntegrationConnector): void
+dispatch(payload: ConnectorPayload): Promise&lt;void&gt;
+dispatchAlert(alert: MonitoringAlert): Promise&lt;void&gt;
+dispatchAudit(event: AuditEvent): Promise&lt;void&gt;</code></pre>
+
+<h3 id="connectors">Connectors</h3>
+
+<pre><code class="language-typescript">new WebhookConnector({ url: string, headers?: Record&lt;string, string&gt; })
+new RestConnector({ url: string, headers?: Record&lt;string, string&gt; })
+new DatadogConnector({ apiKey: string, site?: string, titlePrefix?: string })
+new SplunkHECConnector({ url: string, token: string, source?: string, sourcetype?: string })
+new KafkaRestConnector({ url: string, topic: string, headers?: Record&lt;string, string&gt; })</code></pre>
+
+<hr>
+
+<h2 id="monitoring">Monitoring</h2>
+
+<h3 id="loadmonitoringsnapshot">loadMonitoringSnapshot</h3>
+
+<pre><code class="language-typescript">import { loadMonitoringSnapshot } from 'fireworks-plus-plus'
+
+loadMonitoringSnapshot(paths: LocalArtifactPaths, options?: { recentLimit?: number }): Promise&lt;MonitoringSnapshot&gt;</code></pre>
+
+<h3 id="rendermonitoringdashboardhtml">renderMonitoringDashboardHtml</h3>
+
+<pre><code class="language-typescript">import { renderMonitoringDashboardHtml } from 'fireworks-plus-plus'
+
+renderMonitoringDashboardHtml(snapshot: MonitoringSnapshot, alerts?: MonitoringAlert[]): string</code></pre>
+
+<h3 id="alertmanager">AlertManager</h3>
+
+<pre><code class="language-typescript">import { AlertManager } from 'fireworks-plus-plus'
+new AlertManager(config?: AlertManagerConfig)
+
+evaluate(snapshot: MonitoringSnapshot): Promise&lt;MonitoringAlert[]&gt;</code></pre>
+
+<p><strong>Config:</strong> <code>rules?: MonitoringAlertRule[]</code>, <code>staleAfterMs?: number</code>, <code>now?: () => Date</code>.</p>
+
+<hr>
+
+<h2 id="server">Server</h2>
+
+<h3 id="managementserver">ManagementServer</h3>
+
+<pre><code class="language-typescript">import { ManagementServer } from 'fireworks-plus-plus'
+new ManagementServer(config: ManagementServerConfig)
+
+start(): Promise&lt;{ url: string; port: number }&gt;
+stop(): Promise&lt;void&gt;
+authenticateHeaders(headers: Record&lt;string, string | string[] | undefined&gt;): Promise&lt;boolean&gt;
+getDashboardPayload(): Promise&lt;{ snapshot: MonitoringSnapshot; alerts: MonitoringAlert[] }&gt;
+renderDashboard(): Promise&lt;string&gt;</code></pre>
+
+<p><strong>Config:</strong> <code>auditPath?: string</code>, <code>checkpointDir?: string</code>, <code>workflowDir?: string</code>, <code>host?: string</code>, <code>port?: number</code>, <code>authenticator?: Authenticator</code>, <code>corsOrigin?: string</code>.</p>
+
+<hr>
+
+<h2 id="workflows">Workflows</h2>
+
+<h3 id="workflowgraph">WorkflowGraph</h3>
+
+<pre><code class="language-typescript">import { WorkflowGraph } from 'fireworks-plus-plus'
+new WorkflowGraph(workflowId: string)
+
+addNode(nodeId: string, handler: WorkflowNodeHandler, options?: { start?: boolean; terminal?: boolean }): WorkflowGraph
+addEdge(from: string, to: string, condition?: WorkflowCondition, label?: string): WorkflowGraph
+addConditionalEdges(from: string, branches: WorkflowBranch[]): WorkflowGraph
+setStart(nodeId: string): WorkflowGraph
+markTerminal(nodeId: string): WorkflowGraph
+validate(): void</code></pre>
+
+<h3 id="workflownoderesult">WorkflowNodeResult</h3>
+
+<pre><code class="language-typescript">interface WorkflowNodeResult {
+  state?: ChainValues
+  next?: string
+  pause?: boolean
+  pauseReason?: string
+  output?: ChainValues
+  parallel?: WorkflowParallelBranch[]
+  mergeStrategy?: 'namespaced' | 'shallow'
+  namespaceKey?: string
+  metadata?: Record&lt;string, unknown&gt;
+}</code></pre>
+
+<h3 id="workflowparallelbranch">WorkflowParallelBranch</h3>
+
+<pre><code class="language-typescript">interface WorkflowParallelBranch {
+  nodeId: string
+  state?: ChainValues
+  label?: string
+}</code></pre>
+
+<h3 id="workflowexecutor">WorkflowExecutor</h3>
+
+<pre><code class="language-typescript">import { WorkflowExecutor } from 'fireworks-plus-plus'
+new WorkflowExecutor(graph: WorkflowGraph, config?: WorkflowExecutorConfig)
+
+run(initialState?: ChainValues): Promise&lt;ChainValues&gt;
+resume(threadId: string, statePatch?: ChainValues): Promise&lt;ChainValues&gt;
+resumeFromCheckpoint(checkpointId: string, statePatch?: ChainValues): Promise&lt;ChainValues&gt;</code></pre>
+
+<p><strong>Config:</strong> <code>checkpointStore?: WorkflowCheckpointStore</code>, <code>threadId?: string</code>, <code>maxSteps?: number</code>, <code>metadata?: Record<string, unknown></code>, <code>verbose?: boolean</code>.</p>
+
+<h3 id="inmemoryworkflowcheckpointstore">InMemoryWorkflowCheckpointStore</h3>
+
+<pre><code class="language-typescript">import { InMemoryWorkflowCheckpointStore } from 'fireworks-plus-plus'
+new InMemoryWorkflowCheckpointStore()</code></pre>
+
+<h3 id="fileworkflowcheckpointstore">FileWorkflowCheckpointStore</h3>
+
+<pre><code class="language-typescript">import { FileWorkflowCheckpointStore } from 'fireworks-plus-plus'
+new FileWorkflowCheckpointStore({ directory?: string })</code></pre>
+
+<hr>
+
+<h2 id="routing">Routing</h2>
+
+<h3 id="heuristicrouter">HeuristicRouter</h3>
+
+<pre><code class="language-typescript">import { HeuristicRouter } from 'fireworks-plus-plus'
+new HeuristicRouter()
+route(input: string): RouteDecision</code></pre>
+
+<h3 id="intentrouter">IntentRouter</h3>
+
+<pre><code class="language-typescript">import { IntentRouter } from 'fireworks-plus-plus'
+new IntentRouter(llm?: BaseChatModel, options?: IntentRouterOptions)
+route(input: string): Promise&lt;RouteDecision&gt;
+routeWithConfidence(input: string): Promise&lt;RouteDecision&gt;</code></pre>
+
+<p><strong>Options:</strong> <code>confidenceThreshold?: number</code> (default <code>0.7</code>), <code>timeout?: number</code> (default <code>15000</code>).</p>
+
+<hr>
+
+<h2 id="safety">Safety</h2>
+
+<h3 id="safetypolicy">SafetyPolicy</h3>
+
+<pre><code class="language-typescript">import { SafetyPolicy } from 'fireworks-plus-plus'
+new SafetyPolicy()
+check(input: string): SafetyResult
+isBlocked(input: string): boolean</code></pre>
+
+<hr>
+
+<h2 id="core-types">Core Types</h2>
+
+<pre><code class="language-typescript">// All exported from 'fireworks-plus-plus'
+
+type MessageRole = "system" | "human" | "ai" | "function" | "tool"
+
+interface Message {
+  role: MessageRole
+  content: string
+  name?: string
+  functionCall?: FunctionCall
+  toolCalls?: ToolCall[]
+  toolCallId?: string
+  refusal?: string
+  metadata?: Record&lt;string, unknown&gt;
+}
+
+interface LLMResult {
+  generations: Generation[][]
+  llmOutput?: Record&lt;string, unknown&gt;
+  runId?: string
+}
+
+interface Generation {
+  text: string
+  generationInfo?: Record&lt;string, unknown&gt;
+  message?: Message
+}
+
+type ChainValues = Record&lt;string, unknown&gt;
+
+interface Document {
+  pageContent: string
+  metadata: Record&lt;string, unknown&gt;
+  id?: string
+}
+
+type Embedding = number[]
+
+interface RunOptions {
+  stop?: string[]
+  timeout?: number
+  maxTokens?: number
+  temperature?: number
+  topP?: number
+  callbacks?: CallbackHandler[]
+  tags?: string[]
+  metadata?: Record&lt;string, unknown&gt;
+}
+
+interface StreamingChunk {
+  text: string
+  isFirst: boolean
+  isFinal: boolean
+  metadata?: Record&lt;string, unknown&gt;
+}
+
+type StreamCallback = (chunk: StreamingChunk) =&gt; void | Promise&lt;void&gt;
+
+interface ToolResult {
+  output: string
+  error?: string
+  metadata?: Record&lt;string, unknown&gt;
+}
+
+interface AgentAction {
+  tool: string
+  toolInput: string
+  log: string
+  messageLog?: Message[]
+}
+
+interface AgentFinish {
+  returnValues: Record&lt;string, unknown&gt;
+  log: string
+}
+
+interface SafetyResult {
+  allowed: boolean
+  reason?: string
+  flaggedPatterns?: string[]
+}
+
+interface ToolCall {
+  id?: string
+  name: string
+  arguments: string
+}
+
+type RouteKind = "llm" | "ssh" | "browser" | "research" | "document" | "editor" | "skill" | "calculator"
+
+interface RouteDecision {
+  kind: RouteKind
+  confidence: number
+  reasoning?: string
+}
+
+interface SimilarityResult {
+  document: Document
+  score: number
+}
+
+interface TokenUsage {
+  promptTokens: number
+  completionTokens: number
+  totalTokens: number
+}
+
+type ProviderName = "anthropic" | "openai" | "perplexity" | "ollama" | "custom"
+
+interface CallbackHandler {
+  onLLMStart?: (llmName: string, prompts: string[], runId: string) =&gt; void | Promise&lt;void&gt;
+  onLLMEnd?: (response: LLMResult, runId: string) =&gt; void | Promise&lt;void&gt;
+  onLLMError?: (error: Error, runId: string) =&gt; void | Promise&lt;void&gt;
+  onLLMNewToken?: (token: string, runId: string) =&gt; void | Promise&lt;void&gt;
+  onChainStart?: (chainName: string, inputs: ChainValues, runId: string) =&gt; void | Promise&lt;void&gt;
+  onChainEnd?: (outputs: ChainValues, runId: string) =&gt; void | Promise&lt;void&gt;
+  onChainError?: (error: Error, runId: string) =&gt; void | Promise&lt;void&gt;
+  onToolStart?: (toolName: string, input: string, runId: string) =&gt; void | Promise&lt;void&gt;
+  onToolEnd?: (output: string, runId: string) =&gt; void | Promise&lt;void&gt;
+  onToolError?: (error: Error, runId: string) =&gt; void | Promise&lt;void&gt;
+  onAgentAction?: (action: AgentAction, runId: string) =&gt; void | Promise&lt;void&gt;
+  onAgentFinish?: (finish: AgentFinish, runId: string) =&gt; void | Promise&lt;void&gt;
+}
+
+interface EvaluationCase&lt;TInput, TExpected&gt; {
+  id?: string
+  input: TInput
+  expected: TExpected
+  metadata?: Record&lt;string, unknown&gt;
+}
+
+interface EvaluationOutcome {
+  passed: boolean
+  score: number
+  feedback?: string
+}
+
+interface EvaluationResult&lt;TInput, TExpected, TActual&gt; extends EvaluationOutcome {
+  caseId: string
+  input: TInput
+  expected: TExpected
+  actual: TActual
+  durationMs: number
+  metadata?: Record&lt;string, unknown&gt;
+}
+
+interface EvaluationSummary&lt;TInput, TExpected, TActual&gt; {
+  total: number
+  passed: number
+  failed: number
+  averageScore: number
+  durationMs: number
+  results: Array&lt;EvaluationResult&lt;TInput, TExpected, TActual&gt;&gt;
+}</code></pre>
+
+  </main>
+</body>
+</html>

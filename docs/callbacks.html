@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Callbacks — Fireworks++</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f9fafb;
+      --surface: #ffffff;
+      --border: #e2e6ef;
+      --accent: #e05a1a;
+      --accent2: #c04a0e;
+      --text: #1a1d2e;
+      --muted: #6b7280;
+      --code-bg: #f3f4f6;
+      --link: #2563eb;
+      --nav-w: 260px;
+    }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    nav {
+      width: var(--nav-w);
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 0;
+      position: fixed;
+      top: 0; left: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-brand {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-brand .logo {
+      font-size: 22px;
+    }
+    .nav-brand h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .nav-brand span {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 12px 0;
+    }
+    nav ul li a {
+      display: block;
+      padding: 7px 24px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.15s, background 0.15s;
+      border-left: 3px solid transparent;
+    }
+    nav ul li a:hover {
+      color: var(--text);
+      background: rgba(255,107,43,0.06);
+    }
+    nav ul li.active a {
+      color: var(--accent2);
+      border-left-color: var(--accent);
+      background: rgba(255,107,43,0.08);
+      font-weight: 600;
+    }
+
+    /* ── Main content ── */
+    main {
+      margin-left: var(--nav-w);
+      flex: 1;
+      max-width: 860px;
+      padding: 52px 60px;
+    }
+
+    h1 { font-size: 2rem; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.5px; }
+    h2 { font-size: 1.4rem; font-weight: 700; margin: 40px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.1rem; font-weight: 600; margin: 28px 0 10px; }
+    h4 { font-size: 1rem; font-weight: 600; margin: 20px 0 8px; color: var(--accent2); }
+    h5, h6 { font-size: 0.95rem; font-weight: 600; margin: 16px 0 6px; color: var(--muted); }
+
+    p { margin: 12px 0; color: var(--text); }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    code {
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 0.85em;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #c2410c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      overflow-x: auto;
+      margin: 18px 0;
+      position: relative;
+    }
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: #374151;
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 0.88em;
+      line-height: 1.6;
+    }
+
+    /* Syntax-ish colour hints */
+    pre code .kw { color: #c678dd; }
+    pre code .st { color: #98c379; }
+    pre code .cm { color: #5c6370; font-style: italic; }
+
+    blockquote {
+      border-left: 4px solid var(--accent);
+      background: rgba(255,107,43,0.06);
+      padding: 14px 20px;
+      border-radius: 0 6px 6px 0;
+      margin: 16px 0;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    ul, ol {
+      padding-left: 24px;
+      margin: 12px 0;
+    }
+    li { margin: 5px 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.9rem;
+    }
+    th {
+      background: var(--surface);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      color: var(--accent2);
+    }
+    td {
+      padding: 9px 14px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+
+    strong { color: #111; font-weight: 700; }
+    em { color: var(--accent2); font-style: italic; }
+    del { color: var(--muted); }
+
+    /* ── Badge pills on homepage ── */
+    .badge {
+      display: inline-block;
+      background: rgba(255,107,43,0.15);
+      color: var(--accent2);
+      border: 1px solid rgba(255,107,43,0.3);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    @media (max-width: 768px) {
+      nav { display: none; }
+      main { margin-left: 0; padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-brand">
+      <span class="logo">🔥</span>
+      <div>
+        <h1>Fireworks++</h1>
+        <span>v0.1.0</span>
+      </div>
+    </div>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="concepts.html">Concepts</a></li>
+<li><a href="llms.html">LLMs</a></li>
+<li><a href="chains.html">Chains</a></li>
+<li><a href="agents.html">Agents</a></li>
+<li><a href="tools.html">Tools</a></li>
+<li><a href="memory.html">Memory</a></li>
+<li><a href="prompts.html">Prompts</a></li>
+<li><a href="output-parsers.html">Output Parsers</a></li>
+<li><a href="document-loaders.html">Document Loaders</a></li>
+<li><a href="vector-stores.html">Vector Stores</a></li>
+<li class="active"><a href="callbacks.html">Callbacks</a></li>
+<li><a href="cli.html">CLI</a></li>
+<li><a href="checkpoints.html">Checkpoints</a></li>
+<li><a href="evaluations.html">Evaluations</a></li>
+<li><a href="simple-api.html">Simple API</a></li>
+<li><a href="mcp.html">MCP</a></li>
+<li><a href="auth.html">Auth</a></li>
+<li><a href="governance.html">Governance</a></li>
+<li><a href="plugins.html">Plugins</a></li>
+<li><a href="integrations.html">Integrations</a></li>
+<li><a href="monitoring.html">Monitoring</a></li>
+<li><a href="server.html">Server</a></li>
+<li><a href="python-sdk.html">Python SDK</a></li>
+<li><a href="workflows.html">Workflows</a></li>
+<li><a href="routing.html">Routing</a></li>
+<li><a href="safety.html">Safety</a></li>
+<li><a href="api-reference.html">API Reference</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h1 id="callbacks">Callbacks</h1>
+
+<p>Callbacks give you visibility into every stage of the Fireworks++ execution pipeline. Attach them to LLMs, chains, or tools to receive events when execution starts, ends, errors, or produces a streaming token.</p>
+
+<h2 id="callbackhandler-interface">CallbackHandler Interface</h2>
+
+<pre><code class="language-typescript">interface CallbackHandler {
+  onLLMStart?:    (llmName: string, prompts: string[], runId: string) =&gt; void | Promise&lt;void&gt;
+  onLLMEnd?:      (response: LLMResult, runId: string) =&gt; void | Promise&lt;void&gt;
+  onLLMError?:    (error: Error, runId: string) =&gt; void | Promise&lt;void&gt;
+  onLLMNewToken?: (token: string, runId: string) =&gt; void | Promise&lt;void&gt;
+  onChainStart?:  (chainName: string, inputs: ChainValues, runId: string) =&gt; void | Promise&lt;void&gt;
+  onChainEnd?:    (outputs: ChainValues, runId: string) =&gt; void | Promise&lt;void&gt;
+  onChainError?:  (error: Error, runId: string) =&gt; void | Promise&lt;void&gt;
+  onToolStart?:   (toolName: string, input: string, runId: string) =&gt; void | Promise&lt;void&gt;
+  onToolEnd?:     (output: string, runId: string) =&gt; void | Promise&lt;void&gt;
+  onToolError?:   (error: Error, runId: string) =&gt; void | Promise&lt;void&gt;
+  onAgentAction?: (action: AgentAction, runId: string) =&gt; void | Promise&lt;void&gt;
+  onAgentFinish?: (finish: AgentFinish, runId: string) =&gt; void | Promise&lt;void&gt;
+}</code></pre>
+
+<p>Each handler method is optional — implement only the events you care about.</p>
+
+<hr>
+
+<h2 id="basecallbackhandler">BaseCallbackHandler</h2>
+
+<p>A convenient abstract base class with no-op implementations of every method. Extend it and override only what you need:</p>
+
+<pre><code class="language-typescript">import { BaseCallbackHandler } from 'fireworks-plus-plus'
+import type { LLMResult, ChainValues } from 'fireworks-plus-plus'
+
+class MyCallbackHandler extends BaseCallbackHandler {
+  private tokenCount = 0
+  private chainStartTime = 0
+
+  override async onLLMNewToken(token: string, _runId: string): Promise&lt;void&gt; {
+    this.tokenCount++
+    process.stdout.write(token)
+  }
+
+  override async onChainStart(chainName: string, _inputs: ChainValues, runId: string): Promise&lt;void&gt; {
+    this.chainStartTime = Date.now()
+    console.log(`\n[START] Chain: ${chainName}, ID: ${runId}`)
+  }
+
+  override async onChainEnd(_outputs: ChainValues, runId: string): Promise&lt;void&gt; {
+    const elapsed = Date.now() - this.chainStartTime
+    console.log(`\n[END] ${runId} completed in ${elapsed}ms, tokens: ${this.tokenCount}`)
+    this.tokenCount = 0
+  }
+
+  override async onChainError(error: Error, runId: string): Promise&lt;void&gt; {
+    console.error(`\n[ERROR] ${runId}: ${error.message}`)
+  }
+}
+
+// Attach to an LLM or chain
+const handler = new MyCallbackHandler()
+const llm = new ChatAnthropic({ callbacks: [handler] })</code></pre>
+
+<hr>
+
+<h2 id="loggingcallbackhandler">LoggingCallbackHandler</h2>
+
+<p>A production-ready callback handler that emits structured, timestamped log lines for all lifecycle events. Supports configurable log levels and a custom prefix.</p>
+
+<pre><code class="language-typescript">import { LoggingCallbackHandler } from 'fireworks-plus-plus'
+
+const logger = new LoggingCallbackHandler({
+  level: 'info',            // 'debug' | 'info' | 'warn'
+  prefix: '[MyApp]'         // Prepended to every log line
+})</code></pre>
+
+<h3 id="log-levels">Log Levels</h3>
+
+<table><thead><tr><th>Level</th><th>Events included</th></tr></thead><tbody><tr><td><code>debug</code></td><td>All events including <code>onLLMStart</code> and <code>onLLMNewToken</code></td></tr>
+<tr><td><code>info</code></td><td>LLM end, chain start/end, tool start/end, agent actions (default)</td></tr>
+<tr><td><code>warn</code></td><td>Errors only</td></tr></tbody></table>
+
+<h3 id="sample-output">Sample Output</h3>
+
+<pre><code class="language-text">2026-04-02T10:15:01.234Z [MyApp] [CHAIN:START] chain="llm_chain" inputKeys=[topic] runId=abc123
+2026-04-02T10:15:01.235Z [MyApp] [LLM:END]     generations=1 runId=abc123
+2026-04-02T10:15:02.891Z [MyApp] [CHAIN:END]   outputKeys=[text] runId=abc123</code></pre>
+
+<h3 id="attaching-to-a-chain">Attaching to a Chain</h3>
+
+<pre><code class="language-typescript">import { ChatAnthropic, LLMChain, PromptTemplate, LoggingCallbackHandler } from 'fireworks-plus-plus'
+
+const logger = new LoggingCallbackHandler({ level: 'info' })
+
+const llm = new ChatAnthropic({ callbacks: [logger] })
+const chain = new LLMChain(llm, PromptTemplate.fromTemplate('{input}'), {
+  callbacks: [logger]
+})
+
+await chain.run('Hello, world!')
+// Logs chain start, LLM start/end, chain end</code></pre>
+
+<hr>
+
+<h2 id="streamingcallbackhandler">StreamingCallbackHandler</h2>
+
+<p>Collects streaming tokens into a buffer and calls your <code>onToken</code> function for each token as it arrives. Use this when you want to display tokens to the user in real time.</p>
+
+<pre><code class="language-typescript">import { StreamingCallbackHandler, ChatAnthropic } from 'fireworks-plus-plus'
+
+const handler = new StreamingCallbackHandler((token: string) =&gt; {
+  process.stdout.write(token)
+})
+
+const llm = new ChatAnthropic({ callbacks: [handler] })
+
+await llm.stream(
+  [{ role: 'human', content: 'Write a haiku about rain.' }],
+  async (chunk) =&gt; {
+    if (chunk.isFinal) console.log('\n--- streaming complete ---')
+  }
+)
+
+// After streaming, access the full accumulated text
+console.log('Full response:', handler.getBuffer())
+
+// Reset for the next streaming call
+handler.reset()</code></pre>
+
+<h3 id="methods">Methods</h3>
+
+<pre><code class="language-typescript">class StreamingCallbackHandler extends BaseCallbackHandler {
+  constructor(onToken: (token: string) =&gt; void)
+
+  getBuffer(): string  // Full accumulated text so far
+  reset(): void        // Clear the buffer for reuse
+}</code></pre>
+
+<hr>
+
+<h2 id="tracingcallbackhandler">TracingCallbackHandler</h2>
+
+<pre><code class="language-typescript">import { TracingCallbackHandler } from 'fireworks-plus-plus'
+
+const tracing = new TracingCallbackHandler()</code></pre>
+
+<hr>
+
+<p><code>TracingCallbackHandler</code> records in-memory run trees with:</p>
+
+<ul><li>Chain, tool, and LLM runs</li><li>Parent-child relationships</li><li>Start/end timestamps and durations</li><li>Streamed token counts</li><li>Agent actions and final outputs</li></ul>
+
+<h3 id="common-methods">Common methods</h3>
+
+<pre><code class="language-typescript">tracing.getRun(runId)
+tracing.getRuns()
+tracing.getRootRuns()
+tracing.getSummary()
+tracing.clear()
+tracing.printSummary()</code></pre>
+
+<h3 id="example">Example</h3>
+
+<pre><code class="language-typescript">import { ChatAnthropic, LLMChain, PromptTemplate, TracingCallbackHandler } from 'fireworks-plus-plus'
+
+const tracing = new TracingCallbackHandler()
+const llm = new ChatAnthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+  callbacks: [tracing]
+})
+
+const chain = new LLMChain(
+  llm,
+  PromptTemplate.fromTemplate('Answer briefly: {question}'),
+  { callbacks: [tracing] }
+)
+
+await chain.run({ question: 'What is the capital of France?' })
+
+console.log(tracing.getSummary())
+console.log(tracing.getRootRuns())</code></pre>
+
+<hr>
+
+<h2 id="costtrackinghandler">CostTrackingHandler</h2>
+
+<pre><code class="language-typescript">import { CostTrackingHandler } from 'fireworks-plus-plus'
+
+const costs = new CostTrackingHandler()</code></pre>
+
+<hr>
+
+<p><code>CostTrackingHandler</code> tracks approximate input/output token usage and cost by model. It reads usage data from model responses and ships with a small default pricing table for common Anthropic and OpenAI models.</p>
+
+<h3 id="common-methods">Common methods</h3>
+
+<pre><code class="language-typescript">costs.getSummary()
+costs.reset()
+costs.printSummary()</code></pre>
+
+<h3 id="custom-pricing">Custom pricing</h3>
+
+<pre><code class="language-typescript">import { CostTrackingHandler } from 'fireworks-plus-plus'
+
+const costs = new CostTrackingHandler({
+  pricing: {
+    'my-model': { input: 1.2, output: 4.8 }
+  }
+})</code></pre>
+
+<h2 id="attaching-callbacks">Attaching Callbacks</h2>
+
+<p>Callbacks can be attached at three levels, and all three fire on each execution:</p>
+
+<pre><code class="language-typescript">import { ChatAnthropic, LLMChain, PromptTemplate, LoggingCallbackHandler } from 'fireworks-plus-plus'
+
+const logger = new LoggingCallbackHandler({ level: 'debug' })
+
+// 1. LLM level — fires for every LLM call this model makes
+const llm = new ChatAnthropic({ callbacks: [logger] })
+
+// 2. Chain level — fires for chain start/end AND passes down to child LLM calls
+const chain = new LLMChain(llm, PromptTemplate.fromTemplate('{input}'), {
+  callbacks: [logger]
+})
+
+// 3. Per-call level — fires only for this specific call
+await chain.call({ input: 'Hello' }, [logger])</code></pre>
+
+<p>You can also use multiple handlers simultaneously:</p>
+
+<pre><code class="language-typescript">const chain = new LLMChain(llm, prompt, {
+  callbacks: [
+    new LoggingCallbackHandler({ level: 'info' }),
+    new TracingCallbackHandler(),
+    new CostTrackingHandler()
+  ]
+})</code></pre>
+
+  </main>
+</body>
+</html>

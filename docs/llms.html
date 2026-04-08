@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLMs and Chat Models — Fireworks++</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f9fafb;
+      --surface: #ffffff;
+      --border: #e2e6ef;
+      --accent: #e05a1a;
+      --accent2: #c04a0e;
+      --text: #1a1d2e;
+      --muted: #6b7280;
+      --code-bg: #f3f4f6;
+      --link: #2563eb;
+      --nav-w: 260px;
+    }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    nav {
+      width: var(--nav-w);
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 0;
+      position: fixed;
+      top: 0; left: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-brand {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-brand .logo {
+      font-size: 22px;
+    }
+    .nav-brand h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .nav-brand span {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 12px 0;
+    }
+    nav ul li a {
+      display: block;
+      padding: 7px 24px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.15s, background 0.15s;
+      border-left: 3px solid transparent;
+    }
+    nav ul li a:hover {
+      color: var(--text);
+      background: rgba(255,107,43,0.06);
+    }
+    nav ul li.active a {
+      color: var(--accent2);
+      border-left-color: var(--accent);
+      background: rgba(255,107,43,0.08);
+      font-weight: 600;
+    }
+
+    /* ── Main content ── */
+    main {
+      margin-left: var(--nav-w);
+      flex: 1;
+      max-width: 860px;
+      padding: 52px 60px;
+    }
+
+    h1 { font-size: 2rem; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.5px; }
+    h2 { font-size: 1.4rem; font-weight: 700; margin: 40px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.1rem; font-weight: 600; margin: 28px 0 10px; }
+    h4 { font-size: 1rem; font-weight: 600; margin: 20px 0 8px; color: var(--accent2); }
+    h5, h6 { font-size: 0.95rem; font-weight: 600; margin: 16px 0 6px; color: var(--muted); }
+
+    p { margin: 12px 0; color: var(--text); }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    code {
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 0.85em;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #c2410c;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      overflow-x: auto;
+      margin: 18px 0;
+      position: relative;
+    }
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: #374151;
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 0.88em;
+      line-height: 1.6;
+    }
+
+    /* Syntax-ish colour hints */
+    pre code .kw { color: #c678dd; }
+    pre code .st { color: #98c379; }
+    pre code .cm { color: #5c6370; font-style: italic; }
+
+    blockquote {
+      border-left: 4px solid var(--accent);
+      background: rgba(255,107,43,0.06);
+      padding: 14px 20px;
+      border-radius: 0 6px 6px 0;
+      margin: 16px 0;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    ul, ol {
+      padding-left: 24px;
+      margin: 12px 0;
+    }
+    li { margin: 5px 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.9rem;
+    }
+    th {
+      background: var(--surface);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      color: var(--accent2);
+    }
+    td {
+      padding: 9px 14px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+
+    strong { color: #111; font-weight: 700; }
+    em { color: var(--accent2); font-style: italic; }
+    del { color: var(--muted); }
+
+    /* ── Badge pills on homepage ── */
+    .badge {
+      display: inline-block;
+      background: rgba(255,107,43,0.15);
+      color: var(--accent2);
+      border: 1px solid rgba(255,107,43,0.3);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    @media (max-width: 768px) {
+      nav { display: none; }
+      main { margin-left: 0; padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-brand">
+      <span class="logo">🔥</span>
+      <div>
+        <h1>Fireworks++</h1>
+        <span>v0.1.0</span>
+      </div>
+    </div>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="concepts.html">Concepts</a></li>
+<li class="active"><a href="llms.html">LLMs</a></li>
+<li><a href="chains.html">Chains</a></li>
+<li><a href="agents.html">Agents</a></li>
+<li><a href="tools.html">Tools</a></li>
+<li><a href="memory.html">Memory</a></li>
+<li><a href="prompts.html">Prompts</a></li>
+<li><a href="output-parsers.html">Output Parsers</a></li>
+<li><a href="document-loaders.html">Document Loaders</a></li>
+<li><a href="vector-stores.html">Vector Stores</a></li>
+<li><a href="callbacks.html">Callbacks</a></li>
+<li><a href="cli.html">CLI</a></li>
+<li><a href="checkpoints.html">Checkpoints</a></li>
+<li><a href="evaluations.html">Evaluations</a></li>
+<li><a href="simple-api.html">Simple API</a></li>
+<li><a href="mcp.html">MCP</a></li>
+<li><a href="auth.html">Auth</a></li>
+<li><a href="governance.html">Governance</a></li>
+<li><a href="plugins.html">Plugins</a></li>
+<li><a href="integrations.html">Integrations</a></li>
+<li><a href="monitoring.html">Monitoring</a></li>
+<li><a href="server.html">Server</a></li>
+<li><a href="python-sdk.html">Python SDK</a></li>
+<li><a href="workflows.html">Workflows</a></li>
+<li><a href="routing.html">Routing</a></li>
+<li><a href="safety.html">Safety</a></li>
+<li><a href="api-reference.html">API Reference</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h1 id="llms-and-chat-models">LLMs and Chat Models</h1>
+
+<p>Fireworks++ supports five LLM providers out of the box: Anthropic, OpenAI, Gemini, Perplexity, and Ollama. All providers share a common interface, so you can swap between them with minimal code changes.</p>
+
+<h2 id="basellm-vs-basechatmodel">BaseLLM vs BaseChatModel</h2>
+
+<p>There are two base classes:</p>
+
+<table><thead><tr><th>Class</th><th>Input</th><th>Output</th><th>Best for</th></tr></thead><tbody><tr><td><code>BaseLLM</code></td><td>Plain text string</td><td>Plain text string</td><td>Older completion models</td></tr>
+<tr><td><code>BaseChatModel</code></td><td>Array of <code>Message</code> objects</td><td>A single <code>Message</code></td><td>Modern chat models (Claude, GPT-4, etc.)</td></tr></tbody></table>
+
+<p>Modern LLM applications almost always use <code>BaseChatModel</code>. The <code>BaseLLM</code> class exists for compatibility with older-style text completion APIs.</p>
+
+<h3 id="basellm-interface">BaseLLM Interface</h3>
+
+<pre><code class="language-typescript">// Core method
+abstract generate(prompts: string[], options?: RunOptions): Promise&lt;LLMResult&gt;
+
+// Convenience methods
+call(prompt: string, options?: RunOptions): Promise&lt;string&gt;
+predict(text: string, options?: RunOptions): Promise&lt;string&gt;
+stream(prompt: string, callback: StreamCallback, options?: RunOptions): Promise&lt;void&gt;</code></pre>
+
+<h3 id="basechatmodel-interface">BaseChatModel Interface</h3>
+
+<pre><code class="language-typescript">// Core method
+abstract generate(messages: Message[][], options?: RunOptions): Promise&lt;LLMResult&gt;
+
+// Convenience methods
+call(messages: Message[], options?: RunOptions): Promise&lt;Message&gt;
+predict(messages: Message[], options?: RunOptions): Promise&lt;string&gt;
+invoke(messages: Message[], options?: RunOptions): Promise&lt;Message&gt;
+stream(messages: Message[], callback: StreamCallback, options?: RunOptions): Promise&lt;void&gt;
+callWithTools(messages: Message[], tools: FunctionDefinition[], options?: ToolCallOptions): Promise&lt;Message&gt;
+generateStructured&lt;T&gt;(messages: Message[], schema: StructuredOutputSchema, options?: RunOptions): Promise&lt;T&gt;</code></pre>
+
+<p><code>callWithTools()</code> and <code>generateStructured()</code> are implemented natively by <code>ChatOpenAI</code>, <code>ChatAnthropic</code>, and <code>ChatGemini</code>.</p>
+
+<hr>
+
+<h2 id="chatanthropic">ChatAnthropic</h2>
+
+<p>Wraps Anthropic's Claude models. Uses the Messages API directly via <code>fetch</code>.</p>
+
+<pre><code class="language-typescript">import { ChatAnthropic } from 'fireworks-plus-plus'
+
+const llm = new ChatAnthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY, // or reads ANTHROPIC_API_KEY env var
+  model: 'claude-3-5-sonnet-20241022',
+  temperature: 0.7,
+  maxTokens: 2048,
+  topP: 1.0,
+  timeout: 60_000,
+  anthropicVersion: '2023-06-01',
+  systemPrompt: 'You are a helpful assistant.', // optional default system prompt
+  verbose: false,
+  streaming: false
+})</code></pre>
+
+<h3 id="config-options">Config Options</h3>
+
+<table><thead><tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>apiKey</code></td><td><code>string</code></td><td><code>ANTHROPIC_API_KEY</code> env</td><td>Anthropic API key</td></tr>
+<tr><td><code>model</code></td><td><code>string</code></td><td><code>claude-3-5-sonnet-20241022</code></td><td>Model name</td></tr>
+<tr><td><code>temperature</code></td><td><code>number</code></td><td><code>0.7</code></td><td>Sampling temperature (0–1)</td></tr>
+<tr><td><code>maxTokens</code></td><td><code>number</code></td><td><code>2048</code></td><td>Maximum tokens to generate</td></tr>
+<tr><td><code>topP</code></td><td><code>number</code></td><td><code>1.0</code></td><td>Nucleus sampling parameter</td></tr>
+<tr><td><code>stop</code></td><td><code>string[]</code></td><td><code>[]</code></td><td>Stop sequences</td></tr>
+<tr><td><code>timeout</code></td><td><code>number</code></td><td><code>60000</code></td><td>Request timeout in milliseconds</td></tr>
+<tr><td><code>baseUrl</code></td><td><code>string</code></td><td><code><a href="https://api.anthropic.com">https://api.anthropic.com</a></code></td><td>Override API endpoint</td></tr>
+<tr><td><code>anthropicVersion</code></td><td><code>string</code></td><td><code>2023-06-01</code></td><td>Anthropic API version header</td></tr>
+<tr><td><code>systemPrompt</code></td><td><code>string</code></td><td>—</td><td>Default system message</td></tr>
+<tr><td><code>verbose</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Log debug information</td></tr>
+<tr><td><code>callbacks</code></td><td><code>CallbackHandler[]</code></td><td><code>[]</code></td><td>Lifecycle callbacks</td></tr></tbody></table>
+
+<h3 id="available-models">Available Models</h3>
+
+<table><thead><tr><th>Model</th><th>Context</th><th>Notes</th></tr></thead><tbody><tr><td><code>claude-opus-4-5</code></td><td>200K</td><td>Most capable</td></tr>
+<tr><td><code>claude-sonnet-4-5</code></td><td>200K</td><td>Balanced speed/quality</td></tr>
+<tr><td><code>claude-haiku-3-5</code></td><td>200K</td><td>Fastest, lowest cost</td></tr>
+<tr><td><code>claude-3-5-sonnet-20241022</code></td><td>200K</td><td>Previous generation, widely used</td></tr></tbody></table>
+
+<h3 id="message-format">Message Format</h3>
+
+<p>Fireworks++ maps its <code>MessageRole</code> types to Anthropic's format:</p>
+
+<table><thead><tr><th>Fireworks++ role</th><th>Anthropic role</th></tr></thead><tbody><tr><td><code>system</code></td><td>Becomes <code>system</code> field in the request body</td></tr>
+<tr><td><code>human</code></td><td><code>user</code></td></tr>
+<tr><td><code>ai</code></td><td><code>assistant</code></td></tr>
+<tr><td><code>tool</code> / <code>function</code></td><td><code>user</code> (with "Tool result:" prefix)</td></tr></tbody></table>
+
+<h3 id="streaming-with-chatanthropic">Streaming with ChatAnthropic</h3>
+
+<p><code>ChatAnthropic</code> has native streaming support using SSE:</p>
+
+<pre><code class="language-typescript">import { ChatAnthropic } from 'fireworks-plus-plus'
+
+const llm = new ChatAnthropic({ model: 'claude-3-5-sonnet-20241022' })
+
+await llm.stream(
+  [
+    { role: 'system', content: 'You are a poet.' },
+    { role: 'human', content: 'Write a haiku about the sea.' }
+  ],
+  (chunk) =&gt; {
+    if (!chunk.isFinal) {
+      process.stdout.write(chunk.text)
+    }
+  }
+)</code></pre>
+
+<h3 id="native-tool-calling-and-structured-output">Native Tool Calling and Structured Output</h3>
+
+<p><code>ChatAnthropic</code> supports native tool use and schema-driven structured output:</p>
+
+<pre><code class="language-typescript">import { ChatAnthropic, DynamicTool } from 'fireworks-plus-plus'
+
+const llm = new ChatAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const tool = new DynamicTool({
+  name: 'get_weather',
+  description: 'Get weather by city',
+  func: async (input) =&gt; ({ output: `Sunny in ${input}` })
+})
+
+const toolReply = await llm.callWithTools(
+  [{ role: 'human', content: 'Weather in Tokyo?' }],
+  [tool.toSchema()],
+  { toolChoice: 'required' }
+)
+
+const structured = await llm.generateStructured(
+  [{ role: 'human', content: 'Return the capital of France.' }],
+  {
+    name: 'capital_answer',
+    schema: {
+      type: 'object',
+      properties: { capital: { type: 'string' } },
+      required: ['capital']
+    }
+  }
+)</code></pre>
+
+<hr>
+
+<h2 id="chatopenai">ChatOpenAI</h2>
+
+<p>Wraps OpenAI's chat completion API.</p>
+
+<pre><code class="language-typescript">import { ChatOpenAI } from 'fireworks-plus-plus'
+
+const llm = new ChatOpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+  model: 'gpt-4o',
+  temperature: 0.7,
+  maxTokens: 2048
+})
+
+const reply = await llm.call([
+  { role: 'human', content: 'What is 2 + 2?' }
+])
+console.log(reply.content)</code></pre>
+
+<h3 id="config-options">Config Options</h3>
+
+<table><thead><tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>apiKey</code></td><td><code>string</code></td><td><code>OPENAI_API_KEY</code> env</td><td>OpenAI API key</td></tr>
+<tr><td><code>model</code></td><td><code>string</code></td><td><code>gpt-4o</code></td><td>Model name</td></tr>
+<tr><td><code>temperature</code></td><td><code>number</code></td><td><code>0.7</code></td><td>Sampling temperature</td></tr>
+<tr><td><code>maxTokens</code></td><td><code>number</code></td><td><code>2048</code></td><td>Max tokens</td></tr>
+<tr><td><code>topP</code></td><td><code>number</code></td><td><code>1.0</code></td><td>Nucleus sampling</td></tr>
+<tr><td><code>baseUrl</code></td><td><code>string</code></td><td>OpenAI API</td><td>Override for Azure or proxy</td></tr>
+<tr><td><code>organization</code></td><td><code>string</code></td><td>—</td><td>OpenAI organization ID</td></tr></tbody></table>
+
+<h3 id="available-models">Available Models</h3>
+
+<table><thead><tr><th>Model</th><th>Notes</th></tr></thead><tbody><tr><td><code>gpt-4o</code></td><td>Latest GPT-4 Omni</td></tr>
+<tr><td><code>gpt-4o-mini</code></td><td>Fast, cost-effective</td></tr>
+<tr><td><code>gpt-4-turbo</code></td><td>Previous generation</td></tr>
+<tr><td><code>o1</code></td><td>Reasoning model</td></tr>
+<tr><td><code>o3-mini</code></td><td>Compact reasoning model</td></tr></tbody></table>
+
+<h3 id="native-tool-calling-and-structured-output">Native Tool Calling and Structured Output</h3>
+
+<p><code>ChatOpenAI</code> supports OpenAI-native tool calling via <code>tools</code> / <code>tool_choice</code> and structured outputs via <code>response_format: { type: 'json_schema' }</code>:</p>
+
+<pre><code class="language-typescript">import { ChatOpenAI, DynamicTool } from 'fireworks-plus-plus'
+
+const llm = new ChatOpenAI({ apiKey: process.env.OPENAI_API_KEY })
+const tool = new DynamicTool({
+  name: 'get_weather',
+  description: 'Get weather by city',
+  func: async (input) =&gt; ({ output: `Sunny in ${input}` })
+})
+
+const toolReply = await llm.callWithTools(
+  [{ role: 'human', content: 'Weather in Tokyo?' }],
+  [tool.toSchema()],
+  { toolChoice: 'auto' }
+)
+
+const structured = await llm.generateStructured(
+  [{ role: 'human', content: 'Return the capital of France.' }],
+  {
+    name: 'capital_answer',
+    schema: {
+      type: 'object',
+      properties: { capital: { type: 'string' } },
+      required: ['capital'],
+      additionalProperties: false
+    }
+  }
+)</code></pre>
+
+<hr>
+
+<h2 id="chatgemini">ChatGemini</h2>
+
+<p>Wraps Google's Gemini API through the <code>generateContent</code> endpoint.</p>
+
+<pre><code class="language-typescript">import { ChatGemini } from 'fireworks-plus-plus'
+
+const llm = new ChatGemini({
+  apiKey: process.env.GEMINI_API_KEY,
+  model: 'gemini-2.0-flash'
+})</code></pre>
+
+<h3 id="config-options">Config Options</h3>
+
+<table><thead><tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>apiKey</code></td><td><code>string</code></td><td><code>GEMINI_API_KEY</code> env</td><td>Gemini API key</td></tr>
+<tr><td><code>model</code></td><td><code>string</code></td><td><code>gemini-2.0-flash</code></td><td>Model name</td></tr>
+<tr><td><code>temperature</code></td><td><code>number</code></td><td><code>0.7</code></td><td>Sampling temperature</td></tr>
+<tr><td><code>maxTokens</code></td><td><code>number</code></td><td><code>2048</code></td><td>Max output tokens</td></tr>
+<tr><td><code>baseUrl</code></td><td><code>string</code></td><td>Google API</td><td>Override Gemini endpoint</td></tr></tbody></table>
+
+<h3 id="native-tool-calling-and-structured-output">Native Tool Calling and Structured Output</h3>
+
+<p><code>ChatGemini</code> supports Gemini function declarations and JSON-schema structured responses:</p>
+
+<pre><code class="language-typescript">import { ChatGemini } from 'fireworks-plus-plus'
+
+const llm = new ChatGemini({ apiKey: process.env.GEMINI_API_KEY })
+
+const toolReply = await llm.callWithTools(
+  [{ role: 'human', content: 'Weather in Tokyo?' }],
+  [
+    {
+      name: 'get_weather',
+      description: 'Get weather by city',
+      parameters: {
+        type: 'object',
+        properties: { city: { type: 'string' } }
+      }
+    }
+  ]
+)
+
+const structured = await llm.generateStructured(
+  [{ role: 'human', content: 'Return the capital of France.' }],
+  {
+    name: 'capital_answer',
+    schema: {
+      type: 'object',
+      properties: { capital: { type: 'string' } }
+    }
+  }
+)</code></pre>
+
+<hr>
+
+<h2 id="chatperplexity">ChatPerplexity</h2>
+
+<p>Wraps the Perplexity API, which combines LLM generation with web search.</p>
+
+<pre><code class="language-typescript">import { ChatPerplexity } from 'fireworks-plus-plus'
+
+const llm = new ChatPerplexity({
+  apiKey: process.env.PERPLEXITY_API_KEY,
+  model: 'llama-3.1-sonar-large-128k-online',
+  temperature: 0.2
+})
+
+const reply = await llm.call([
+  { role: 'human', content: 'What happened in AI this week?' }
+])
+console.log(reply.content) // Answer grounded in current web results</code></pre>
+
+<h3 id="config-options">Config Options</h3>
+
+<table><thead><tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>apiKey</code></td><td><code>string</code></td><td><code>PERPLEXITY_API_KEY</code> env</td><td>Perplexity API key</td></tr>
+<tr><td><code>model</code></td><td><code>string</code></td><td><code>llama-3.1-sonar-large-128k-online</code></td><td>Model name</td></tr>
+<tr><td><code>temperature</code></td><td><code>number</code></td><td><code>0.2</code></td><td>Sampling temperature</td></tr>
+<tr><td><code>maxTokens</code></td><td><code>number</code></td><td><code>2048</code></td><td>Max tokens</td></tr></tbody></table>
+
+<h3 id="available-models">Available Models</h3>
+
+<table><thead><tr><th>Model</th><th>Context</th><th>Notes</th></tr></thead><tbody><tr><td><code>llama-3.1-sonar-large-128k-online</code></td><td>127K</td><td>Online search, high quality</td></tr>
+<tr><td><code>llama-3.1-sonar-small-128k-online</code></td><td>127K</td><td>Online search, faster</td></tr>
+<tr><td><code>llama-3.1-sonar-large-128k-chat</code></td><td>127K</td><td>Chat only, no search</td></tr></tbody></table>
+
+<hr>
+
+<h2 id="chatollama">ChatOllama</h2>
+
+<p>Wraps the Ollama local inference server, letting you run open-source models entirely on your own hardware with no API key required.</p>
+
+<h3 id="setup">Setup</h3>
+
+<ol><li>Install Ollama from <a href="<a href="https://ollama.ai">https://ollama.ai">https://ollama.ai">https://ollama.ai</a></a></li><li>Pull a model: <code>ollama pull llama3.2</code></li><li>Ollama starts automatically on <code><a href="http://localhost:11434">http://localhost:11434</a></code></li></ol>
+
+<pre><code class="language-typescript">import { ChatOllama } from 'fireworks-plus-plus'
+
+const llm = new ChatOllama({
+  model: 'llama3.2',
+  baseUrl: 'http://localhost:11434', // default
+  temperature: 0.7
+})
+
+const reply = await llm.call([
+  { role: 'human', content: 'Explain async/await in JavaScript.' }
+])
+console.log(reply.content)</code></pre>
+
+<h3 id="config-options">Config Options</h3>
+
+<table><thead><tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>model</code></td><td><code>string</code></td><td><code>llama3.2</code></td><td>Model name (must be pulled locally)</td></tr>
+<tr><td><code>baseUrl</code></td><td><code>string</code></td><td><code><a href="http://localhost:11434">http://localhost:11434</a></code></td><td>Ollama server URL</td></tr>
+<tr><td><code>temperature</code></td><td><code>number</code></td><td><code>0.7</code></td><td>Sampling temperature</td></tr>
+<tr><td><code>maxTokens</code></td><td><code>number</code></td><td><code>2048</code></td><td>Max tokens</td></tr></tbody></table>
+
+<h3 id="popular-models">Popular Models</h3>
+
+<table><thead><tr><th>Model</th><th>Pull command</th><th>Size</th></tr></thead><tbody><tr><td>Llama 3.2 3B</td><td><code>ollama pull llama3.2</code></td><td>2.0 GB</td></tr>
+<tr><td>Llama 3.2 11B</td><td><code>ollama pull llama3.2:11b</code></td><td>7.9 GB</td></tr>
+<tr><td>Mistral 7B</td><td><code>ollama pull mistral</code></td><td>4.1 GB</td></tr>
+<tr><td>Gemma 2 9B</td><td><code>ollama pull gemma2</code></td><td>5.4 GB</td></tr>
+<tr><td>Phi-3 Mini</td><td><code>ollama pull phi3</code></td><td>2.2 GB</td></tr>
+<tr><td>Qwen 2.5 7B</td><td><code>ollama pull qwen2.5</code></td><td>4.7 GB</td></tr></tbody></table>
+
+<hr>
+
+<h2 id="text-completion-llms">Text Completion LLMs</h2>
+
+<p>For text completion (non-chat) use cases, each provider also has a non-chat variant:</p>
+
+<pre><code class="language-typescript">import { Anthropic, OpenAI, PerplexityLLM, OllamaLLM } from 'fireworks-plus-plus'
+
+// Text completion — takes a string prompt, returns a string
+const anthropicLLM = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const text = await anthropicLLM.call('Once upon a time')</code></pre>
+
+<p>These are useful when working with older model APIs or when you want to avoid message formatting. The <code>LLMChain</code> automatically detects whether it has a <code>BaseLLM</code> or a <code>BaseChatModel</code> and formats the prompt accordingly.</p>
+
+<hr>
+
+<h2 id="multiple-providers-in-one-application">Multiple Providers in One Application</h2>
+
+<p>Because all models share the same interface, you can use different providers for different tasks:</p>
+
+<pre><code class="language-typescript">import { ChatAnthropic, ChatOllama, ChatOpenAI, LLMChain, PromptTemplate } from 'fireworks-plus-plus'
+
+// Use Claude for complex reasoning
+const claudeLLM = new ChatAnthropic({ model: 'claude-opus-4-5' })
+
+// Use Ollama for quick local inference
+const ollamaLLM = new ChatOllama({ model: 'llama3.2' })
+
+// Use GPT-4o-mini for cost-sensitive tasks
+const miniLLM = new ChatOpenAI({ model: 'gpt-4o-mini' })
+
+const complexChain = new LLMChain(claudeLLM, complexPrompt)
+const simpleChain = new LLMChain(ollamaLLM, simplePrompt)
+const cheapChain = new LLMChain(miniLLM, cheapPrompt)</code></pre>
+
+<hr>
+
+<h2 id="runoptions">RunOptions</h2>
+
+<p>All <code>call()</code>, <code>predict()</code>, and <code>generate()</code> methods accept an optional <code>RunOptions</code> object to override defaults per-call:</p>
+
+<pre><code class="language-typescript">import type { RunOptions } from 'fireworks-plus-plus'
+
+const options: RunOptions = {
+  temperature: 0.0,     // Deterministic output for this call
+  maxTokens: 512,       // Limit response length
+  stop: ['```'],        // Stop before a code fence
+  timeout: 30_000,      // 30 second timeout
+  callbacks: [myLogger] // Per-call callbacks
+}
+
+const reply = await llm.call(messages, options)</code></pre>
+
+<hr>
+
+<h2 id="streaming-example">Streaming Example</h2>
+
+<pre><code class="language-typescript">import { ChatAnthropic } from 'fireworks-plus-plus'
+
+const llm = new ChatAnthropic()
+
+let fullText = ''
+await llm.stream(
+  [{ role: 'human', content: 'Count from 1 to 10, one number per line.' }],
+  async (chunk) =&gt; {
+    if (chunk.isFirst) console.log('Streaming started...')
+    if (!chunk.isFinal) {
+      process.stdout.write(chunk.text)
+      fullText += chunk.text
+    }
+    if (chunk.isFinal) console.log('\nStream complete.')
+  }
+)
+console.log('Total length:', fullText.length)</code></pre>
+
+  </main>
+</body>
+</html>

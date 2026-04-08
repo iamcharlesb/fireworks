@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.agentfireworks/
+.fireworks-plus-plus/
+.claude/
+__pycache__/
+*.pyc
+*.log
+.env
+.env.*
