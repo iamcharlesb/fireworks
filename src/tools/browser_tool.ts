@@ -8,8 +8,11 @@ export interface BrowserToolConfig extends BaseToolConfig {
 }
 
 /**
- * BrowserTool — fetches web pages and extracts text content.
- * Uses Node's built-in fetch API to retrieve web content.
+ * BrowserTool — fetches a single URL via Node's built-in fetch and strips HTML down to
+ * plain text. Static/server-rendered pages only: no JS execution, no clicking or typing,
+ * no multi-step sessions, no screenshots. For driving a real browser through a multi-step
+ * task (clicking, typing, visual verification), see python/browser_agent instead, which
+ * wraps Playwright for exactly that.
  *
  * @example
  * const browser = new BrowserTool()

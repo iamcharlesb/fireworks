@@ -30,6 +30,11 @@ import type { BaseMemory } from "../memory/base";
 import type { CallbackHandler, ChainValues, ToolChoice, ToolResult } from "../schema/types";
 import { ManagementServer, type ManagementServerConfig } from "../server";
 import { BaseTool, DynamicTool } from "../tools/base";
+import { CalculatorTool } from "../tools/calculator_tool";
+import { ResearchTool } from "../tools/research_tool";
+import { DocumentTool } from "../tools/document_tool";
+import { EditorTool } from "../tools/editor_tool";
+import { BrowserTool } from "../tools/browser_tool";
 
 export type SimpleProvider =
   | "anthropic"
@@ -77,6 +82,7 @@ export interface CreateAgentConfig extends BaseChatModelConfig {
   organization?: string;
   anthropicVersion?: string;
   tools?: BaseTool[] | Record<string, SimpleToolDefinition>;
+  includeDefaultTools?: boolean;
   systemPrompt?: string;
   toolChoice?: ToolChoice;
   memory?: BaseMemory;
@@ -202,9 +208,33 @@ export class SimpleAgent {
       new FileAuditLogger({ filePath: this.monitoring.auditPath });
 
     this.registerTools(config.tools);
+    if (config.includeDefaultTools) {
+      this.enableAllTools();
+    }
     if (config.governance) {
       this.enableGovernance(config.governance);
     }
+  }
+
+  /**
+   * Registers all built-in Fireworks++ tools (Calculator, Research, Browser, Document, Editor)
+   * that are not already registered on this agent.
+   */
+  enableAllTools(): this {
+    const defaults: BaseTool[] = [
+      new CalculatorTool(),
+      new ResearchTool(),
+      new BrowserTool(),
+      new DocumentTool(),
+      new EditorTool()
+    ];
+    const existingNames = new Set(this.tools.map((t) => t.name));
+    for (const tool of defaults) {
+      if (!existingNames.has(tool.name)) {
+        this.tools.push(tool);
+      }
+    }
+    return this;
   }
 
   private registerTools(

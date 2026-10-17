@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fireworks_plus_plus"
+version = "0.1.0"
+description = "Python utilities aligned with Fireworks++ and AgentMiller (image pipeline, etc.)"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+image = ["pillow>=10.0.0,<12"]
+skills = ["pyyaml>=6,<7"]
+
+[tool.setuptools.packages.find]
+where = ["."]

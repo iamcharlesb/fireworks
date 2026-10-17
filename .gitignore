@@ -4,6 +4,8 @@ dist/
 .fireworks-plus-plus/
 .claude/
 __pycache__/
+.venv/
+*.egg-info/
 *.pyc
 *.log
 .env

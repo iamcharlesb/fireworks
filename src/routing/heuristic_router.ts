@@ -66,7 +66,12 @@ export class HeuristicRouter {
         /\b(draft\s+a|compose\s+a)\b/i,
         /\b(export\s+to\s+pdf|save\s+as\s+pdf)\b/i,
         /\b(word\s+document|excel\s+sheet|google\s+doc)\b/i,
-        /\b(write\s+up|write\s+a\s+summary|write\s+a\s+proposal)\b/i
+        /\b(write\s+up|write\s+a\s+summary|write\s+a\s+proposal)\b/i,
+        /\b(flowchart|diagram|architecture\s+diagram|svg)\b/i,
+        /\b(pdf|annotate|watermark|stamp)\b.*\b(edit|annotate|overlay|footer)\b/i,
+        /\b(edit|annotate|modify)\b.*\b(pdf|attachment)\b/i,
+        /\b(edit|crop|resize|rotate|filter)\b.*\b(image|photo|png|jpeg|jpg|webp|screenshot)\b/i,
+        /\b(image\s+studio|photo\s+editor)\b/i
       ],
       baseConfidence: 0.85
     },
