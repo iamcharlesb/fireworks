@@ -54,7 +54,11 @@
   ],
   "author": "Fireworks++ Contributors",
   "license": "Apache-2.0",
-  "dependencies": {},
+  "dependencies": {
+    "docx": "^9.6.1",
+    "pdf-lib": "^1.17.1",
+    "pptxgenjs": "^4.0.1"
+  },
   "devDependencies": {
     "typescript": "^5.8.2",
     "@types/node": "^22.0.0"

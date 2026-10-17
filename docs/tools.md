@@ -190,14 +190,14 @@ interface SSHToolConfig extends BaseToolConfig {
 
 ## DocumentTool
 
-Generates documents in multiple formats: plain text, Markdown, HTML, JSON, and CSV.
+Generates documents in multiple formats: plain text, Markdown, HTML, JSON, CSV, SVG, Word (`.docx`), and PowerPoint (`.pptx`).
 
 ```typescript
 import { DocumentTool } from 'fireworks-plus-plus'
 
 const docTool = new DocumentTool({
   outputDir: './output',
-  defaultFormat: 'md'  // 'txt' | 'md' | 'html' | 'json' | 'csv'
+  defaultFormat: 'md'  // 'txt' | 'md' | 'html' | 'json' | 'csv' | 'svg' | 'docx' | 'pptx'
 })
 
 // The agent passes JSON with filename and content
@@ -214,7 +214,7 @@ console.log(result) // "Document saved to ./output/quarterly-report.md"
 **Config:**
 
 ```typescript
-type DocumentFormat = 'txt' | 'md' | 'html' | 'json' | 'csv'
+type DocumentFormat = 'txt' | 'md' | 'html' | 'json' | 'csv' | 'svg' | 'docx' | 'pptx'
 
 interface DocumentToolConfig extends BaseToolConfig {
   outputDir?: string    // Default: './output'
