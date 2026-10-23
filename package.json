@@ -1,7 +1,7 @@
 {
   "name": "fireworks-plus-plus",
   "version": "0.1.0",
-  "description": "Fireworks++ — A TypeScript-first agentic AI framework for building LLM-powered applications",
+  "description": "Fireworks++ \u2014 A TypeScript-first agentic AI framework for building LLM-powered applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
@@ -29,6 +29,14 @@
     "dev": "tsc -w -p tsconfig.build.json",
     "test": "npm run build && node --test test/**/*.test.cjs",
     "lint": "tsc -p tsconfig.build.json --noEmit",
+    "desktop": "cd node/browser_agent && node scripts/desktop.js",
+    "desktop:built": "cd node/browser_agent && node scripts/desktop.js",
+    "desktop:attach": "cd node/browser_agent && node scripts/desktop.js --attach",
+    "desktop:dev": "cd node/browser_agent && node scripts/dev.js",
+    "bots:build": "cd node/browser_agent && npm run build",
+    "bots:build:production": "cd node/browser_agent && npm run build:production",
+    "bots:built": "cd node/browser_agent && node scripts/built.js",
+    "bots:test": "cd node/browser_agent && npm test",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
