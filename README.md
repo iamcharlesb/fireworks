@@ -39,6 +39,31 @@ Fireworks++ is an open-source TypeScript framework for building applications pow
 
 ## Installation
 
+### Desktop bot app from GitHub
+
+The desktop app lives in the `node/browser_agent` submodule. It is a separate,
+private GitHub repository; your GitHub account needs access to
+`iamcharlesb/browser-agent` even though this parent repository is public.
+
+```bash
+git clone --recurse-submodules https://github.com/iamcharlesb/fireworks.git
+cd fireworks
+npm ci
+npm --prefix node/browser_agent ci
+cd node/browser_agent
+npx playwright install chromium
+cd ../..
+npm run desktop
+```
+
+For an existing clone, run `git submodule sync --recursive` followed by
+`git submodule update --init --recursive`. Configure model credentials locally in
+the app Settings or `node/browser_agent/.env`; they are separate from GitHub
+credentials. See [browser-agent setup](node/browser_agent/README.md) for development
+and production commands.
+
+### Framework package
+
 ```bash
 npm install fireworks-plus-plus
 # or

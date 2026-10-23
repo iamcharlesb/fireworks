@@ -1,3 +1,3 @@
 [submodule "node/browser_agent"]
 	path = node/browser_agent
-	url = git@bitbucket.org:magicvisor/browser-agent.git
+	url = https://github.com/iamcharlesb/browser-agent.git
