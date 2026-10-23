@@ -60,7 +60,8 @@ For an existing clone, run `git submodule sync --recursive` followed by
 `git submodule update --init --recursive`. Configure model credentials locally in
 the app Settings or `node/browser_agent/.env`; they are separate from GitHub
 credentials. See [browser-agent setup](node/browser_agent/README.md) for development
-and production commands.
+and production commands. For Reddit/Google bot walls, use **Connect Apps → Connect my
+Chrome** (CDP attach); Playwright-launched Chrome alone often cannot complete those logins.
 
 ### Framework package
 
