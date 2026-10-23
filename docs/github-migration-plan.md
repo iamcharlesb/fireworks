@@ -21,14 +21,26 @@ TypeScript/Playwright/Electron app in this project, separate from
 - GitHub received `main` at `cb8594a3ddadff43257acbcb2e0a41a4bc7eef62`, including
   its complete ancestor history. All local branches/tags were included in normal
   pushes, without force or history rewriting.
-- The parent keeps the same submodule path and pinned commit. Only the hosting URL
-  changes; no application source behavior changes in the migration.
+- A fresh-checkout test exposed an assertion tied to the original local folder
+  name. Commit `d681177` makes that test use the actual workspace path. The parent
+  advances its submodule pointer to this commit; application behavior is unchanged.
+- The parent keeps the same submodule path and uses the new GitHub hosting URL.
 - GitHub is the local submodule's `origin` and the upstream for its `main` branch.
 - Existing Bitbucket repositories and remotes remain available as backups.
 
 The `.gitmodules` URL changes from
 `git@bitbucket.org:magicvisor/browser-agent.git` to
 `https://github.com/iamcharlesb/browser-agent.git`.
+
+## Validation
+
+A fresh temporary recursive checkout fetched the pinned submodule directly from
+GitHub. Branch/tag references matched the source, and the GitHub checkout retained
+all 37 browser-agent commits after the portable test fix. Locked dependencies
+installed in the temporary checkout, and both builds and all 153 tests passed
+(38 framework tests and 115 browser-agent tests). Dependency binary download
+hooks were skipped for this verification; Electron launch and model calls were
+not re-tested as part of the hosting migration.
 
 ## Setup
 
