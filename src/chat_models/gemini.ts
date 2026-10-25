@@ -1,3 +1,4 @@
+import { configuredModel } from "../config/models";
 import { BaseChatModel, type BaseChatModelConfig } from "./base";
 import type {
   FunctionDefinition,
@@ -32,7 +33,7 @@ export class ChatGemini extends BaseChatModel {
 
   constructor(config: ChatGeminiConfig = {}) {
     super(config);
-    this.modelName = config.model ?? "gemini-2.0-flash";
+    this.modelName = configuredModel(config.model, "GEMINI_MODEL");
     this.apiKey = config.apiKey ?? process.env.GEMINI_API_KEY ?? "";
     this.baseUrl = config.baseUrl ?? "https://generativelanguage.googleapis.com";
 

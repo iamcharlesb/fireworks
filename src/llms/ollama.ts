@@ -1,3 +1,4 @@
+import { configuredModel } from "../config/models";
 import { BaseLLM, type BaseLLMConfig } from "./base";
 import type { LLMResult, RunOptions, StreamCallback } from "../schema/types";
 
@@ -18,7 +19,7 @@ export class OllamaLLM extends BaseLLM {
 
   constructor(config: OllamaLLMConfig = {}) {
     super(config);
-    this.modelName = config.model ?? "llama3.2";
+    this.modelName = configuredModel(config.model, "OLLAMA_MODEL");
     this.baseUrl = config.baseUrl ?? process.env.OLLAMA_BASE_URL ?? "http://localhost:11434";
     this.keepAlive = config.keepAlive ?? "5m";
   }

@@ -1,3 +1,4 @@
+import { configuredModel } from "../config/models";
 import { BaseLLM, type BaseLLMConfig } from "./base";
 import type { LLMResult, RunOptions, StreamCallback } from "../schema/types";
 
@@ -20,7 +21,7 @@ export class OpenAI extends BaseLLM {
 
   constructor(config: OpenAILLMConfig = {}) {
     super(config);
-    this.modelName = config.model ?? "gpt-4o";
+    this.modelName = configuredModel(config.model, "OPENAI_MODEL");
     this.apiKey = config.apiKey ?? process.env.OPENAI_API_KEY ?? "";
     this.baseUrl = config.baseUrl ?? "https://api.openai.com";
     this.organization = config.organization;

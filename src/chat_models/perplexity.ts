@@ -1,3 +1,4 @@
+import { configuredModel } from "../config/models";
 import { BaseChatModel, type BaseChatModelConfig } from "./base";
 import type { Message, LLMResult, RunOptions, StreamCallback } from "../schema/types";
 
@@ -31,7 +32,7 @@ export class ChatPerplexity extends BaseChatModel {
 
   constructor(config: ChatPerplexityConfig = {}) {
     super(config);
-    this.modelName = config.model ?? "llama-3.1-sonar-large-128k-online";
+    this.modelName = configuredModel(config.model, "PERPLEXITY_MODEL");
     this.apiKey = config.apiKey ?? process.env.PERPLEXITY_API_KEY ?? "";
     this.baseUrl = config.baseUrl ?? "https://api.perplexity.ai";
     this.returnCitations = config.returnCitations ?? false;

@@ -27,7 +27,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "dev": "tsc -w -p tsconfig.build.json",
-    "test": "npm run build && node --test test/**/*.test.cjs",
+    "test": "npm run check:secrets && npm run build && node --test test/**/*.test.cjs",
     "lint": "tsc -p tsconfig.build.json --noEmit",
     "desktop": "cd node/browser_agent && node scripts/desktop.js",
     "desktop:built": "cd node/browser_agent && node scripts/desktop.js",
@@ -37,7 +37,8 @@
     "bots:build:production": "cd node/browser_agent && npm run build:production",
     "bots:built": "cd node/browser_agent && node scripts/built.js",
     "bots:test": "cd node/browser_agent && npm test",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run check:secrets && npm run build",
+    "check:secrets": "node scripts/check-secrets.cjs"
   },
   "keywords": [
     "langchain",

@@ -1,3 +1,4 @@
+import { redactSecrets } from "../security/redaction";
 // ============================================================
 // Fireworks++ — LoggingCallbackHandler
 // Logs all lifecycle events to the console with timestamps and
@@ -45,7 +46,7 @@ export class LoggingCallbackHandler extends BaseCallbackHandler {
   private emit(msgLevel: LogLevel, category: string, message: string): void {
     if (!this.shouldLog(msgLevel)) return;
 
-    const line = `${this.ts()} ${this.prefix} [${category.toUpperCase()}] ${message}`;
+    const line = redactSecrets(`${this.ts()} ${this.prefix} [${category.toUpperCase()}] ${message}`);
 
     if (msgLevel === "warn") {
       console.warn(line);

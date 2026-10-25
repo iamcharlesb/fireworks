@@ -1,3 +1,4 @@
+import { configuredModel } from "../config/models";
 import { BaseLLM, type BaseLLMConfig } from "./base";
 import type { LLMResult, RunOptions, StreamCallback } from "../schema/types";
 
@@ -18,7 +19,7 @@ export class PerplexityLLM extends BaseLLM {
 
   constructor(config: PerplexityLLMConfig = {}) {
     super(config);
-    this.modelName = config.model ?? "llama-3.1-sonar-large-128k-online";
+    this.modelName = configuredModel(config.model, "PERPLEXITY_MODEL");
     this.apiKey = config.apiKey ?? process.env.PERPLEXITY_API_KEY ?? "";
     this.baseUrl = config.baseUrl ?? "https://api.perplexity.ai";
 

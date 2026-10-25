@@ -1,10 +1,11 @@
+import { redactSecretValues } from "../security/redaction";
 import { promises as fs } from "fs";
 import path from "path";
 import { uuidv4 } from "../utils/uuid";
 import type { AuditEvent, AuditEventFilter, AuditLogger } from "./base";
 
 function normalizeEvent(event: Omit<AuditEvent, "id" | "timestamp"> & Partial<AuditEvent>): AuditEvent {
-  return {
+  return redactSecretValues({
     id: event.id ?? uuidv4(),
     timestamp: event.timestamp ?? new Date().toISOString(),
     type: event.type,
@@ -14,7 +15,7 @@ function normalizeEvent(event: Omit<AuditEvent, "id" | "timestamp"> & Partial<Au
     resourceId: event.resourceId,
     message: event.message,
     details: event.details
-  };
+  });
 }
 
 function matchesFilter(event: AuditEvent, filter: AuditEventFilter): boolean {

@@ -208,6 +208,7 @@ test("OpenAIEmbeddings batches and parses embeddings responses", async () => {
 
   try {
     const embeddings = new OpenAIEmbeddings({
+      model: "test-embedding-model",
       apiKey: "test-key",
       batchSize: 2
     });
@@ -279,7 +280,7 @@ test("ChatOpenAI supports native tool calling and structured output", async () =
   };
 
   try {
-    const llm = new ChatOpenAI({ apiKey: "test-key" });
+    const llm = new ChatOpenAI({ apiKey: "test-key", model: "test-openai-model" });
     const toolReply = await llm.callWithTools(
       [{ role: "human", content: "Weather in Tokyo?" }],
       [
@@ -367,7 +368,7 @@ test("ChatAnthropic supports native tool calling and structured output", async (
   };
 
   try {
-    const llm = new ChatAnthropic({ apiKey: "test-key" });
+    const llm = new ChatAnthropic({ apiKey: "test-key", model: "test-anthropic-model" });
     const toolReply = await llm.callWithTools(
       [{ role: "human", content: "Weather in Tokyo?" }],
       [
@@ -582,7 +583,7 @@ test("TracingCallbackHandler records nested runs and agent events", async () => 
 });
 
 test("CostTrackingHandler aggregates usage and approximate cost by model", async () => {
-  const tracker = new CostTrackingHandler();
+  const tracker = new CostTrackingHandler({ pricing: { "gpt-4o": { input: 2.5, output: 10 }, "gpt-4o-mini": { input: 0.15, output: 0.6 } } });
 
   await tracker.onLLMEnd(
     {
@@ -1630,7 +1631,7 @@ test("ChatGemini supports generation, tool calling, and structured output", asyn
   };
 
   try {
-    const gemini = new ChatGemini({ apiKey: "test-key" });
+    const gemini = new ChatGemini({ apiKey: "test-key", model: "test-gemini-model" });
     const reply = await gemini.call([{ role: "human", content: "Hello" }]);
     const toolReply = await gemini.callWithTools(
       [{ role: "human", content: "Weather?" }],
@@ -1973,6 +1974,7 @@ test("createAgent can instantiate a provider-backed model through the simple fac
   try {
     const agent = createAgent({
       provider: "gemini",
+      model: "test-gemini-model",
       apiKey: "test-key"
     });
     const result = await agent.ask("Hello from simple facade");

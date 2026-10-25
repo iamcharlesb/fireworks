@@ -1,3 +1,4 @@
+import { configuredModel } from "../config/models";
 import { BaseChatModel, type BaseChatModelConfig } from "./base";
 import type {
   FunctionDefinition,
@@ -45,7 +46,7 @@ export class ChatOpenAI extends BaseChatModel {
 
   constructor(config: ChatOpenAIConfig = {}) {
     super(config);
-    this.modelName = config.model ?? "gpt-4o";
+    this.modelName = configuredModel(config.model, "OPENAI_MODEL");
     this.apiKey = config.apiKey ?? process.env.OPENAI_API_KEY ?? "";
     this.baseUrl = config.baseUrl ?? "https://api.openai.com";
     this.organization = config.organization;

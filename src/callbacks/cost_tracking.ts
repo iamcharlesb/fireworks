@@ -1,3 +1,4 @@
+import { configuredPricing } from "../config/models";
 import type { LLMResult } from "../schema/types";
 import { BaseCallbackHandler } from "./base";
 
@@ -22,13 +23,6 @@ export interface CostSummary extends UsageSummary {
   totalCost: number;
   byModel: Record<string, UsageSummary & { totalCost: number }>;
 }
-
-const DEFAULT_PRICING: Record<string, ModelPricing> = {
-  "claude-3-5-sonnet-20241022": { input: 3.0, output: 15.0 },
-  "claude-opus-4-5": { input: 15.0, output: 75.0 },
-  "gpt-4o": { input: 2.5, output: 10.0 },
-  "gpt-4o-mini": { input: 0.15, output: 0.6 }
-};
 
 function extractUsageAndModel(response: LLMResult): {
   inputTokens: number;
@@ -75,7 +69,7 @@ export class CostTrackingHandler extends BaseCallbackHandler {
 
   constructor(options: CostTrackingHandlerOptions = {}) {
     super();
-    this.pricing = options.pricing ?? DEFAULT_PRICING;
+    this.pricing = options.pricing ?? configuredPricing();
   }
 
   override async onLLMEnd(response: LLMResult, _runId: string): Promise<void> {

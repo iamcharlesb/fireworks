@@ -73,6 +73,16 @@ yarn add fireworks-plus-plus
 
 No required runtime dependencies. API keys are passed via config or environment variables.
 
+## Runtime configuration
+
+Copy `.env.example` to your ignored `.env` and load it through your application's environment loader. The library reads `process.env`; importing it does not read files or silently select a model version. Every provider accepts an explicit `model`, which overrides its environment variable: `OPENAI_MODEL`, `ANTHROPIC_MODEL`, `GEMINI_MODEL`, `PERPLEXITY_MODEL`, or `OLLAMA_MODEL`. Embeddings use `OPENAI_EMBEDDING_MODEL`. This replaces the old hardcoded model defaults; existing applications must provide one of these settings.
+
+Optional `MODEL_PRICING_JSON` supplies input/output prices per million tokens. No bundled price table is treated as current. Set explicit pricing when estimates are required.
+
+Run `npm run check:secrets` before committing. It scans source in this repository and the initialized browser-agent submodule, reports locations without secret values, and checks for credentials copied from local `.env` files. Model IDs in the example environment files preserve prior defaults; they are not a recommendation or an automatic upgrade.
+
+See [the architecture review](docs/architecture-review.md) for the design assessment, research sources, implemented changes, and remaining limitations.
+
 ## Quick Start
 
 ### Basic Chat
@@ -82,7 +92,7 @@ import { ChatAnthropic } from 'fireworks-plus-plus'
 
 const llm = new ChatAnthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
-  model: 'claude-3-5-sonnet-20241022'
+  model: process.env.ANTHROPIC_MODEL
 })
 
 const reply = await llm.call([
@@ -282,3 +292,7 @@ Apache 2.0 — see [LICENSE](./LICENSE)
 ## Author
 
 Charles Barathidass
+
+## Agent operating files
+
+`AGENTS.md` records project implementation rules and `soul.md` records the shared working-style convention. The browser application loads its own operating files and selectively retrieved playbooks at runtime; see [runtime profile documentation](node/browser_agent/docs/agent-profiles.md). Model-proposed lessons require a separate owner review before they enter an operational playbook.

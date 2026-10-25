@@ -1,3 +1,4 @@
+import { redactSecrets, redactSecretValues } from "../security/redaction";
 import type {
   AgentAction,
   AgentFinish,
@@ -81,7 +82,7 @@ export class TracingCallbackHandler extends BaseCallbackHandler implements Callb
       parentRunId,
       status: "running",
       startedAt: Date.now(),
-      input,
+      input: redactSecretValues(input),
       tokenCount: 0,
       children: [],
       events: []
@@ -107,8 +108,8 @@ export class TracingCallbackHandler extends BaseCallbackHandler implements Callb
     run.endedAt = endedAt;
     run.durationMs = endedAt - run.startedAt;
 
-    if (update.output !== undefined) run.output = update.output;
-    if (update.error !== undefined) run.error = update.error;
+    if (update.output !== undefined) run.output = redactSecretValues(update.output);
+    if (update.error !== undefined) run.error = redactSecrets(update.error);
 
     const stackIndex = this.activeStack.lastIndexOf(runId);
     if (stackIndex !== -1) {
@@ -122,7 +123,7 @@ export class TracingCallbackHandler extends BaseCallbackHandler implements Callb
       type,
       runId,
       timestamp: Date.now(),
-      data
+      data: redactSecretValues(data)
     };
 
     if (run) {

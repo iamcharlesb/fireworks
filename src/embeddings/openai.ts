@@ -1,3 +1,4 @@
+import { configuredModel } from "../config/models";
 import { BaseEmbeddings } from "./base";
 
 export interface OpenAIEmbeddingsConfig {
@@ -25,7 +26,7 @@ export class OpenAIEmbeddings extends BaseEmbeddings {
   constructor(config: OpenAIEmbeddingsConfig = {}) {
     super();
     this.apiKey = config.apiKey ?? process.env.OPENAI_API_KEY ?? "";
-    this.model = config.model ?? "text-embedding-3-small";
+    this.model = configuredModel(config.model, "OPENAI_EMBEDDING_MODEL");
     this.baseUrl = config.baseUrl ?? "https://api.openai.com";
     this.organization = config.organization;
     this.timeout = config.timeout ?? 60_000;

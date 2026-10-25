@@ -1,3 +1,4 @@
+import { configuredModel } from "../config/models";
 import { BaseChatModel, type BaseChatModelConfig } from "./base";
 import type {
   FunctionDefinition,
@@ -31,7 +32,7 @@ export class ChatAnthropic extends BaseChatModel {
 
   constructor(config: ChatAnthropicConfig = {}) {
     super(config);
-    this.modelName = config.model ?? "claude-3-5-sonnet-20241022";
+    this.modelName = configuredModel(config.model, "ANTHROPIC_MODEL");
     this.apiKey = config.apiKey ?? process.env.ANTHROPIC_API_KEY ?? "";
     this.baseUrl = config.baseUrl ?? "https://api.anthropic.com";
     this.anthropicVersion = config.anthropicVersion ?? "2023-06-01";
