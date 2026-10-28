@@ -6,7 +6,7 @@ Migrated on 2026-10-22 from `magicvisor/browser-agent` on Bitbucket to
 ## Visibility and access
 
 The GitHub browser-agent repository is **private**, preserving the source
-repository's visibility. The parent `iamcharlesb/fireworks` repository is public.
+repository's visibility. The parent `iamcharlesb/pilo` repository is public.
 Developers need GitHub access to **both** repositories for a recursive clone.
 Anonymous clones of the parent cannot fetch this private submodule.
 
@@ -47,8 +47,8 @@ not re-tested as part of the hosting migration.
 With GitHub credentials and access to the private submodule:
 
 ```sh
-git clone --recurse-submodules https://github.com/iamcharlesb/fireworks.git
-cd fireworks
+git clone --recurse-submodules https://github.com/iamcharlesb/pilo.git
+cd pilo
 npm ci
 npm --prefix node/browser_agent ci
 cd node/browser_agent

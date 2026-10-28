@@ -1,4 +1,16 @@
-# Fireworks++
+# Pilo
+
+<img src="docs/assets/pilo-logo.png" alt="Pilo blue mascot" width="240" />
+
+**Your desktop. Your AI workspace.**
+
+Pilo is an early desktop workspace for specialized AI bots, browser research and permitted actions, coding, and marketing workflows. It runs the workspace locally, with configurable model providers. Hosted model usage can still incur costs.
+
+Read the [Pilo introduction](https://medium.com/@charlesbharathi/meet-pilo-inspired-by-grok-bots-and-chatgpt-dots-13a17c6c5e41), explore the [desktop app documentation](node/browser_agent/README.md), or contribute improvements to reliability, efficiency, and security. Cloud execution and mobile access are roadmap items.
+
+This repository also contains the Fireworks++ TypeScript framework described below.
+
+## Fireworks++ framework
 
 > **Simple | Secured | Scalable**
 > A TypeScript-first agentic AI framework — Build LLM-powered applications with composable chains, agents, tools, and memory.
@@ -46,8 +58,8 @@ private GitHub repository; your GitHub account needs access to
 `iamcharlesb/browser-agent` even though this parent repository is public.
 
 ```bash
-git clone --recurse-submodules https://github.com/iamcharlesb/fireworks.git
-cd fireworks
+git clone --recurse-submodules https://github.com/iamcharlesb/pilo.git
+cd pilo
 npm ci
 npm --prefix node/browser_agent ci
 cd node/browser_agent
