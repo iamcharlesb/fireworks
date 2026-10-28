@@ -8,6 +8,8 @@ __pycache__/
 *.egg-info/
 *.pyc
 *.log
+# Local reports, screenshots, test evidence and generated artifacts.
+output/
 .env
 .env.*
 

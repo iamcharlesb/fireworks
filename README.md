@@ -63,6 +63,12 @@ credentials. See [browser-agent setup](node/browser_agent/README.md) for develop
 and production commands. For Reddit/Google bot walls, use **Connect Apps → Connect my
 Chrome** (CDP attach); Playwright-launched Chrome alone often cannot complete those logins.
 
+After updating the submodule, run `npm --prefix node/browser_agent ci` before
+`yarn bots:build` (or `npm run bots:build`) to install its locked dependencies.
+The parent repository's install does not install submodule dependencies.
+If a production server already uses port 8766, use `yarn desktop:attach` to open
+its desktop window. Use `yarn desktop:built` to start a separate production server.
+
 ### Framework package
 
 ```bash
