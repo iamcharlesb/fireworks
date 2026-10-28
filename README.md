@@ -2,9 +2,9 @@
 
 <img src="docs/assets/pilo-social.png" alt="Pilo and its specialist bots" width="480" />
 
-**Your desktop. Your AI workspace.**
+**Your Personal Bot inspired by Grok Bots**
 
-Pilo is an early desktop workspace for specialized AI bots, browser research and permitted actions, coding, and marketing workflows. It runs the workspace locally, with configurable model providers. Hosted model usage can still incur costs.
+Pilo is an early open-source personal bot inspired by Grok Bots, with specialist bots for browser research and permitted actions, coding, and marketing workflows. It currently runs locally on your computer, with configurable model providers. Hosted model usage can still incur costs.
 
 Read the [Pilo introduction](https://medium.com/@charlesbharathi/meet-pilo-inspired-by-grok-bots-and-chatgpt-dots-13a17c6c5e41), explore the [desktop app documentation](node/browser_agent/README.md), or contribute improvements to reliability, efficiency, and security. Cloud execution and mobile access are roadmap items.
 
