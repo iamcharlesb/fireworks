@@ -22,7 +22,9 @@
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "NOTICE",
+    "LICENSE-APACHE-2.0"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -62,7 +64,7 @@
     "workflows"
   ],
   "author": "Fireworks++ Contributors",
-  "license": "Apache-2.0",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "dependencies": {
     "docx": "^9.6.1",
     "pdf-lib": "^1.17.1",

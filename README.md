@@ -2,9 +2,9 @@
 
 <img src="docs/assets/pilo-social.png" alt="Pilo and its specialist bots" width="480" />
 
-**Your Personal Bot inspired by Grok Bots**
+**Your Personal Bot inspired by Grok Bots — Source-Available**
 
-Pilo is an early open-source personal bot inspired by Grok Bots, with specialist bots for browser research and permitted actions, coding, and marketing workflows. It currently runs locally on your computer, with configurable model providers. Hosted model usage can still incur costs.
+Pilo is an early source-available personal bot inspired by Grok Bots, with specialist bots for browser research and permitted actions, coding, and marketing workflows. It currently runs locally on your computer, with configurable model providers. Hosted model usage can still incur costs.
 
 Read the [Pilo introduction](https://medium.com/@charlesbharathi/meet-pilo-inspired-by-grok-bots-and-chatgpt-dots-13a17c6c5e41), explore the [desktop app documentation](node/browser_agent/README.md), or contribute improvements to reliability, efficiency, and security. Cloud execution and mobile access are roadmap items.
 
@@ -301,7 +301,21 @@ npx ts-node examples/22-mcp-client-server.ts
 
 ## License
 
-Apache 2.0 — see [LICENSE](./LICENSE)
+Pilo is **source-available for noncommercial use** under the
+[PolyForm Noncommercial License 1.0.0](LICENSE). Commercial use requires
+separate written permission from Charles Barathidass.
+
+Redistributed copies and modified versions must preserve the author credits
+in [NOTICE](NOTICE) and provide the license terms or their official URL.
+Required attribution: **Pilo — created by Charles Barathidass (@iamcharlesb)**.
+
+Noncommercial restrictions mean this is not an OSI-approved open-source license.
+Earlier Apache-2.0 releases retain their original permissions; see
+[the retained Apache license](LICENSE-APACHE-2.0). Third-party components retain
+their own licenses.
+
+You are welcome to [connect with me on LinkedIn](https://www.linkedin.com/in/iamcharlesb/)
+to share feedback or discuss commercial licensing. Connecting is optional.
 
 ## Status
 
