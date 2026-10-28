@@ -6,7 +6,7 @@
 
 Pilo is an early source-available personal bot inspired by Grok Bots, with specialist bots for browser research and permitted actions, coding, and marketing workflows. It currently runs locally on your computer, with configurable model providers. Hosted model usage can still incur costs.
 
-Read the [Pilo introduction](https://medium.com/@charlesbharathi/meet-pilo-inspired-by-grok-bots-and-chatgpt-dots-13a17c6c5e41), explore the [desktop app documentation](node/browser_agent/README.md), or contribute improvements to reliability, efficiency, and security. Cloud execution and mobile access are roadmap items.
+Read the [Pilo introduction](https://medium.com/@iamcharlesb/meet-pilo-inspired-by-grok-bots-and-chatgpt-dots-13a17c6c5e41), explore the [desktop app documentation](node/browser_agent/README.md), or contribute improvements to reliability, efficiency, and security. Cloud execution and mobile access are roadmap items.
 
 This repository also contains the Fireworks++ TypeScript framework described below.
 
