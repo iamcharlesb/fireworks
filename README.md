@@ -4,58 +4,17 @@
 
 **Your Personal Bot inspired by Grok Bots — Source-Available**
 
-Pilo is an early source-available personal bot inspired by Grok Bots, with specialist bots for browser research and permitted actions, coding, and marketing workflows. It currently runs locally on your computer, with configurable model providers. Hosted model usage can still incur costs.
+Pilo helps you delegate research, writing, coding, marketing, job-search preparation, and permitted browser actions to personal and specialist bots. It currently runs on your computer. Hosted model requests can still incur charges; reducing unnecessary token usage is a design goal, not a verified savings guarantee.
 
-Read the [Pilo introduction](https://medium.com/@iamcharlesb/meet-pilo-inspired-by-grok-bots-and-chatgpt-dots-13a17c6c5e41), explore the [desktop app documentation](node/browser_agent/README.md), or contribute improvements to reliability, efficiency, and security. Cloud execution and mobile access are roadmap items.
+## Before you start
 
-This repository also contains the Fireworks++ TypeScript framework described below.
+- Install Git and Node.js 18 or newer, with npm.
+- You need access to [iamcharlesb/browser-agent](https://github.com/iamcharlesb/browser-agent), the separate **private** repository containing the application. This public repository alone is not a complete app download.
+- Have your chosen model provider credentials and model ID ready, or configure a local model. Google sign-in and MongoDB are optional.
 
-## Fireworks++ framework
+## Install and launch
 
-> **Simple | Secured | Scalable**
-> A TypeScript-first agentic AI framework — Build LLM-powered applications with composable chains, agents, tools, and memory.
-
-## What is Fireworks++?
-
-Fireworks++ is an open-source TypeScript framework for building applications powered by large language models (LLMs). It provides a clean, composable architecture for creating everything from simple chatbots to complex autonomous agents that interact with the real world.
-
-- **Provider Abstraction** — Unified API for Anthropic, OpenAI, Gemini, Perplexity, and Ollama
-- **Gemini Support** — Native Google Gemini chat and text wrappers with tool calling and structured output
-- **Native Tool Calling** — Provider-native tool/function calling for OpenAI and Anthropic chat models
-- **Native Tool Agents** — Tool-calling agent loop built on provider-native tool use
-- **Structured Output** — JSON-schema structured output helpers for OpenAI and Anthropic
-- **Tracing and Costing** — In-memory traces and approximate token/cost accounting
-- **Evaluations** — Lightweight dataset runners with built-in exact-match and contains evaluators
-- **Checkpointing** — Resume tool-calling agent runs from in-memory or file-backed state
-- **Human Approval** — Pause risky tool calls, approve or reject them, and resume from checkpoints
-- **CLI** — Scaffold projects, inspect audit logs, and summarize checkpoints/workflows locally
-- **Governance Controls** — RBAC, policies, budgets, and audit logging for agents and workflows
-- **Monitoring Dashboard** — Generate local dashboards and alert summaries from runtime artifacts
-- **Management Server** — Self-hosted HTTP server for dashboards, alerts, and operational APIs
-- **Plugins and Connectors** — Extensible plugin registry plus webhook, Datadog, Splunk, Kafka, and REST connectors
-- **Simple Facade** — `createAgent()` API for fast adoption with a clean upgrade path to the advanced runtime
-- **MCP Support** — First-class MCP client and server support for tools, resources, and prompts
-- **Workflow Graphs** — Conditional graph execution with branching state and resumable workflow checkpoints
-- **Composable Chains** — LLMChain, SequentialChain, RouterChain, TransformChain
-- **Intelligent Agents** — ReAct agents with tool use and multi-step planning
-- **Built-in Tools** — SSH, Browser, Research, Document generation, Editor, Calculator
-- **Memory Systems** — Buffer, Window, Summary, and Thread-based conversation memory
-- **Intent Routing** — Heuristic and LLM-based request routing
-- **Safety Policies** — Content filtering before execution
-- **Output Parsers** — JSON, Structured, and List parsers
-- **Document Loaders** — Text, JSON, and CSV loading with split support
-- **Retrievers** — Vector-store retrievers for reusable RAG pipelines
-- **Vector Stores** — In-memory semantic search with cosine similarity
-- **Streaming** — Token-level streaming with callback handlers
-- **Full TypeScript** — Strict typing throughout, excellent IDE support
-
-## Installation
-
-### Desktop bot app from GitHub
-
-The desktop app lives in the `node/browser_agent` submodule. It is a separate,
-private GitHub repository; your GitHub account needs access to
-`iamcharlesb/browser-agent` even though this parent repository is public.
+Clone with submodules so the application code is included:
 
 ```bash
 git clone --recurse-submodules https://github.com/iamcharlesb/pilo.git
@@ -68,236 +27,63 @@ cd ../..
 npm run desktop
 ```
 
-For an existing clone, run `git submodule sync --recursive` followed by
-`git submodule update --init --recursive`. Configure model credentials locally in
-the app Settings or `node/browser_agent/.env`; they are separate from GitHub
-credentials. See [browser-agent setup](node/browser_agent/README.md) for development
-and production commands. For Reddit/Google bot walls, use **Connect Apps → Connect my
-Chrome** (CDP attach); Playwright-launched Chrome alone often cannot complete those logins.
+The last command builds and opens Pilo in a desktop window. Keep the terminal running while you use it. The desktop server uses port 8766 by default.
 
-After updating the submodule, run `npm --prefix node/browser_agent ci` before
-`yarn bots:build` (or `npm run bots:build`) to install its locked dependencies.
-The parent repository's install does not install submodule dependencies.
-If a production server already uses port 8766, use `yarn desktop:attach` to open
-its desktop window. Use `yarn desktop:built` to start a separate production server.
+If cloning reports **Repository not found** for `browser-agent`, sign in to GitHub with an account that has access to that repository. Downloading this repository as a ZIP does not include the submodule.
 
-### Framework package
+## Connect a model
 
-```bash
-npm install fireworks-plus-plus
-# or
-yarn add fireworks-plus-plus
-```
+1. Open **Settings** in Pilo.
+2. Configure your provider connection, credentials, and model selection.
+3. Select the configured model in the chat composer, then send a short message to check the connection.
 
-No required runtime dependencies. API keys are passed via config or environment variables.
+Keep credentials local. You can also configure `node/browser_agent/.env` using its [environment reference](node/browser_agent/.env.example). Model versions, pricing, and operational limits are configuration settings. Local Engine is a limited fallback; a capable configured model is needed for general AI tasks.
 
-## Runtime configuration
+## Start your first task
 
-Copy `.env.example` to your ignored `.env` and load it through your application's environment loader. The library reads `process.env`; importing it does not read files or silently select a model version. Every provider accepts an explicit `model`, which overrides its environment variable: `OPENAI_MODEL`, `ANTHROPIC_MODEL`, `GEMINI_MODEL`, `PERPLEXITY_MODEL`, or `OLLAMA_MODEL`. Embeddings use `OPENAI_EMBEDDING_MODEL`. This replaces the old hardcoded model defaults; existing applications must provide one of these settings.
+1. Use **Primary Bot**, choose a specialist, or create a custom bot.
+2. Start with a concrete task, such as “Draft a LinkedIn article about my project” or “Research these competitors and summarize the differences.”
+3. Attach your project folder when asking for code changes.
+4. For work in your signed-in browser, open **Connect Apps → Connect my Chrome** and follow the connection instructions.
+5. Review requested approvals before allowing actions. Use **Stop** to cancel a run.
 
-Optional `MODEL_PRICING_JSON` supplies input/output prices per million tokens. No bundled price table is treated as current. Set explicit pricing when estimates are required.
+Start with a draft or research task so you can inspect the result before asking Pilo to take outward actions.
 
-Run `npm run check:secrets` before committing. It scans source in this repository and the initialized browser-agent submodule, reports locations without secret values, and checks for credentials copied from local `.env` files. Model IDs in the example environment files preserve prior defaults; they are not a recommendation or an automatic upgrade.
+## Update an existing installation
 
-See [the architecture review](docs/architecture-review.md) for the design assessment, research sources, implemented changes, and remaining limitations.
-
-## Quick Start
-
-### Basic Chat
-
-```typescript
-import { ChatAnthropic } from 'fireworks-plus-plus'
-
-const llm = new ChatAnthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-  model: process.env.ANTHROPIC_MODEL
-})
-
-const reply = await llm.call([
-  { role: 'human', content: 'What is the capital of France?' }
-])
-console.log(reply.content) // "The capital of France is Paris."
-```
-
-### LLM Chain
-
-```typescript
-import { ChatAnthropic, LLMChain, PromptTemplate } from 'fireworks-plus-plus'
-
-const llm = new ChatAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-const prompt = PromptTemplate.fromTemplate('Tell me a {adjective} joke about {topic}')
-const chain = new LLMChain(llm, prompt)
-
-const result = await chain.run({ adjective: 'funny', topic: 'programmers' })
-console.log(result)
-```
-
-### Conversation with Memory
-
-```typescript
-import { ChatAnthropic, ConversationBufferMemory } from 'fireworks-plus-plus'
-
-const llm = new ChatAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-const memory = new ConversationBufferMemory()
-
-async function chat(userInput: string): Promise<string> {
-  const vars = await memory.loadMemoryVariables()
-  const history = vars['history'] as string
-
-  const messages = []
-  if (history) {
-    messages.push({ role: 'system' as const, content: `Conversation so far:\n${history}` })
-  }
-  messages.push({ role: 'human' as const, content: userInput })
-
-  const reply = await llm.call(messages)
-  await memory.saveContext({ input: userInput }, { output: reply.content })
-  return reply.content
-}
-
-await chat('My name is Alice.')
-const response = await chat('What is my name?')
-console.log(response) // "Your name is Alice."
-```
-
-### Semantic Search (RAG)
-
-```typescript
-import {
-  InMemoryVectorStore,
-  FakeEmbeddings,
-  TextLoader,
-  VectorStoreRetriever
-} from 'fireworks-plus-plus'
-
-const loader = new TextLoader('./my-document.txt')
-const docs = await loader.load()
-
-const store = await InMemoryVectorStore.fromDocuments(docs, new FakeEmbeddings())
-const retriever = new VectorStoreRetriever(store, { k: 3 })
-const results = await retriever.getRelevantDocuments('key concepts')
-results.forEach(r => console.log(r.pageContent))
-```
-
-### Streaming
-
-```typescript
-import { ChatAnthropic } from 'fireworks-plus-plus'
-
-const llm = new ChatAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-
-await llm.stream(
-  [{ role: 'human', content: 'Write a haiku about TypeScript.' }],
-  (chunk) => {
-    if (!chunk.isFinal) process.stdout.write(chunk.text)
-  }
-)
-```
-
-### Intent Routing
-
-```typescript
-import { IntentRouter, HeuristicRouter } from 'fireworks-plus-plus'
-
-const router = new IntentRouter()
-const decision = await router.route('Calculate 42 * 7 + 100')
-console.log(decision.kind)       // "calculator"
-console.log(decision.confidence) // 0.92
-```
-
-### Safety Policy
-
-```typescript
-import { SafetyPolicy } from 'fireworks-plus-plus'
-
-const policy = new SafetyPolicy()
-const result = policy.check(userInput)
-if (!result.allowed) {
-  console.error('Blocked:', result.reason)
-}
-```
-
-## Modules
-
-```
-Fireworks++
-├── schema/          Core types and interfaces
-├── llms/            Text completion: Anthropic, OpenAI, Gemini, Perplexity, Ollama
-├── chat_models/     Chat models: ChatAnthropic, ChatOpenAI, ChatGemini, ChatPerplexity, ChatOllama
-├── prompts/         PromptTemplate, ChatPromptTemplate, FewShotPromptTemplate
-├── chains/          LLMChain, SequentialChain, RouterChain, TransformChain
-├── tools/           ResearchTool, CalculatorTool, BrowserTool, SSHTool, DocumentTool, EditorTool
-├── memory/          Buffer, Window, Summary, ThreadedMemory
-├── output_parsers/  JsonOutputParser, StructuredOutputParser, list parsers
-├── document_loaders/ TextLoader, BaseDocumentLoader
-├── embeddings/      BaseEmbeddings, FakeEmbeddings, OpenAIEmbeddings
-├── retrievers/      BaseRetriever, VectorStoreRetriever
-├── vectorstores/    InMemoryVectorStore
-├── callbacks/       Logging, Streaming, Tracing, CostTracking handlers
-├── evaluations/     Dataset runners and built-in evaluators
-├── checkpoints/     In-memory and file-backed runtime checkpoints
-├── governance/      RBAC, policies, budgets, and audit logging
-├── auth/            Bearer auth and SAML-style attribute mapping
-├── plugins/         Plugin registry for tools, loaders, workflow nodes, callbacks
-├── integrations/    Webhook, Datadog, Splunk, Kafka, and REST connectors
-├── mcp/             Model Context Protocol client/server support
-├── monitoring/      Snapshot loading, alert rules, and static dashboard rendering
-├── simple/          High-level createAgent facade
-├── server/          Self-hosted management API server
-├── workflows/       Workflow graphs, branching state, and workflow executors
-├── routing/         HeuristicRouter, IntentRouter
-└── safety/          SafetyPolicy
-```
-
-## Documentation
-
-- [Getting Started](./docs/getting-started.md)
-- [Core Concepts](./docs/concepts.md)
-- [LLMs and Chat Models](./docs/llms.md)
-- [Chains](./docs/chains.md)
-- [Agents and Tools](./docs/agents.md)
-- [Tools Reference](./docs/tools.md)
-- [Memory](./docs/memory.md)
-- [Output Parsers](./docs/output-parsers.md)
-- [Document Loaders and Text Splitters](./docs/document-loaders.md)
-- [Vector Stores](./docs/vector-stores.md)
-- [Callbacks](./docs/callbacks.md)
-- [CLI](./docs/cli.md)
-- [Checkpoints](./docs/checkpoints.md)
-- [Evaluations](./docs/evaluations.md)
-- [Governance](./docs/governance.md)
-- [Simple API](./docs/simple-api.md)
-- [MCP](./docs/mcp.md)
-- [Auth](./docs/auth.md)
-- [Plugins](./docs/plugins.md)
-- [Integrations](./docs/integrations.md)
-- [Monitoring](./docs/monitoring.md)
-- [Management Server](./docs/server.md)
-- [Python SDK](./docs/python-sdk.md)
-- [Workflows](./docs/workflows.md)
-- [Intent Routing](./docs/routing.md)
-- [Safety](./docs/safety.md)
-- [API Reference](./docs/api-reference.md)
-
-## Examples
-
-See the [examples/](./examples/) directory for runnable TypeScript examples.
+From the Pilo repository folder:
 
 ```bash
-export ANTHROPIC_API_KEY=your-key
-npx ts-node examples/01-basic-llm.ts
-npx ts-node examples/17-governance-controls.ts
-npx ts-node examples/18-monitoring-dashboard.ts
-npx ts-node examples/19-plugins-and-connectors.ts
-npx ts-node examples/20-management-server.ts
-npx ts-node examples/21-simple-create-agent.ts
-npx ts-node examples/22-mcp-client-server.ts
+git pull
+git submodule sync --recursive
+git submodule update --init --recursive
+npm ci
+npm --prefix node/browser_agent ci
+npm run desktop
 ```
 
-## Requirements
+Commit or save your local edits before updating. If a Pilo server is already running on port 8766, use `npm run desktop:attach` to open a window connected to it.
 
-- Node.js >= 18.0.0
-- TypeScript >= 5.0
+## Troubleshooting
+
+| Problem | What to check |
+| --- | --- |
+| Application folder is empty | Run `git submodule update --init --recursive`; confirm access to the private app repository. |
+| Electron or TypeScript is missing | Run `npm --prefix node/browser_agent ci`. |
+| Browser executable is missing | Run `npx playwright install chromium` from `node/browser_agent`. |
+| Model does not respond | Check the selected provider, model ID, credentials, provider balance, and limits in Settings. |
+| Google or Reddit blocks an automated browser | Use **Connect Apps → Connect my Chrome** with your own browser session. |
+| Port 8766 is already in use | Reuse your running Pilo server with `npm run desktop:attach`. |
+
+## More help and contributing
+
+- [Application documentation](node/browser_agent/README.md): provider configuration, browser connection, approvals, and advanced setup.
+- [CLI setup](node/browser_agent/docs/cli.md): terminal use without the desktop window.
+- [Operating boundaries](node/browser_agent/docs/buddy-bot-production.md): current limitations and deployment details.
+- [The story behind Pilo](https://medium.com/@iamcharlesb/meet-pilo-inspired-by-grok-bots-and-chatgpt-dots-13a17c6c5e41).
+- [Report an issue](https://github.com/iamcharlesb/pilo/issues): include reproduction steps and remove credentials from logs.
+
+Pilo is early stage. Contributions to reliability, usage efficiency, documentation, and security are welcome. Cloud execution and mobile access are roadmap items.
 
 ## License
 
@@ -317,14 +103,6 @@ their own licenses.
 You are welcome to [connect with me on LinkedIn](https://www.linkedin.com/in/iamcharlesb/)
 to share feedback or discuss commercial licensing. Connecting is optional.
 
-## Status
+## Creator
 
-> **Work in Progress** — Fireworks++ is actively being developed. APIs may evolve and new modules are being added. Contributions, feedback, and ideas are very welcome.
-
-## Author
-
-Charles Barathidass
-
-## Agent operating files
-
-`AGENTS.md` records project implementation rules and `soul.md` records the shared working-style convention. The browser application loads its own operating files and selectively retrieved playbooks at runtime; see [runtime profile documentation](node/browser_agent/docs/agent-profiles.md). Model-proposed lessons require a separate owner review before they enter an operational playbook.
+**Charles Barathidass · [@iamcharlesb](https://github.com/iamcharlesb)**
