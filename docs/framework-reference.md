@@ -91,7 +91,7 @@ Optional `MODEL_PRICING_JSON` supplies input/output prices per million tokens. N
 
 Run `npm run check:secrets` before committing. It scans source in this repository and the initialized browser-agent submodule, reports locations without secret values, and checks for credentials copied from local `.env` files. Model IDs in the example environment files preserve prior defaults; they are not a recommendation or an automatic upgrade.
 
-See [the architecture review](docs/architecture-review.md) for the design assessment, research sources, implemented changes, and remaining limitations.
+See [the architecture review](architecture-review.md) for the design assessment, research sources, implemented changes, and remaining limitations.
 
 ## Quick Start
 
